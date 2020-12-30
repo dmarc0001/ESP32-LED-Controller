@@ -33,10 +33,10 @@ void initPrefs( OTASrv::OTAPrefs &prefs )
 /**
  * Initialisiere PWM für LED
  */
-void initPWM( OTASrv::OTAPrefs &prefs, LedControl::LedControlClass &ledControl )
+void initPWM( LedControl::LedControlClass &ledControl )
 {
   Serial.println( "init PWM (LED Conrtrol)..." );
-  ledControl.init(prefs);
+  ledControl.init();
   Serial.println( "init PWM (LED Control)...OK" );
 }
 

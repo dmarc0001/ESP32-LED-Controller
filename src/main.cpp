@@ -7,7 +7,7 @@ AsyncElegantOtaClass *otaServer;
 
 void setup( void )
 {
-  ledControl.standBy();
+  initPWM( ledControl );
   //
   // für das Debugging
   //
@@ -18,8 +18,9 @@ void setup( void )
   // alles im Programm initialisieren
   //
   initPrefs( prefs );
-  initPWM( prefs, ledControl );
   initWiFi( prefs );
+  // signalisieren
+  digitalWrite( OTASrv::LED_WLANOK, HIGH );
   initMDNS( prefs );
   otaServer = initHttpServer( prefs, httpServer );
 }

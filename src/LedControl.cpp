@@ -9,10 +9,24 @@ namespace LedControl
   void LedControlClass::standBy( bool standby )
   {
     _standby = standby;
+    if ( !ledInited )
+    {
+      return;
+    }
+    // alles aus
+    ledcWrite( OTASrv::PWM_LED_CHANNEL_RED, 0 );
+    ledcWrite( OTASrv::PWM_LED_CHANNEL_GREEN, 0 );
+    ledcWrite( OTASrv::PWM_LED_CHANNEL_BLUE, 0 );
+    ledcWrite( OTASrv::PWM_LED_CHANNEL_WHITE, 0 );
+    digitalWrite( OTASrv::LED_WLANOK, LOW );
   }
 
-  void LedControlClass::init( OTASrv::OTAPrefs &prefs )
+  void LedControlClass::init()
   {
+    //
+    // Namensraum der PREFS "ProjectDefaults.hpp"
+    //
+    using namespace OTASrv;
     //
     // WLAN Lampe
     //
