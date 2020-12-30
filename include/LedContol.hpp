@@ -1,5 +1,6 @@
 #pragma once
 #include "OTAPrefs.hpp"
+#include "ProjectDefaults.hpp"
 
 //
 // Klasse für PWM LED Control

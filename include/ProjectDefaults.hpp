@@ -12,15 +12,28 @@ namespace OTASrv
   constexpr char apiPassword[] = "admin";
   constexpr char updateUser[] = "admin";
   constexpr char updatePassword[] = "admin";
-  // 
+  //
   // Seriennummer des Programmes
   //
-  constexpr char serialStr[] = "20201228-0027";
+  constexpr char serialStr[] = "20201230-0001";
 
   //
-  // PWM Ausgänge
+  // PWM/LED Ausgänge
   //
-  //constexpr 
+  constexpr double PWM_LED_FREQ = 10000.0;
+  constexpr uint8_t PWM_RESOLUTION = 12;  // Resolution 8, 10, 12, 15 BITS
+  constexpr uint8_t PWM_LED_RED = 27;     // RET LED
+  constexpr uint8_t PWM_LED_CHANNEL_RED = 0;
+  constexpr uint8_t PWM_LED_GREEN = 26;  // GREEN LED
+  constexpr uint8_t PWM_LED_CHANNEL_GREEN = 1;
+  constexpr uint8_t PWM_LED_BLUE = 25;  // BLUE LED
+  constexpr uint8_t PWM_LED_CHANNEL_BLUE = 3;
+  constexpr uint8_t PWM_LED_WHITE = 33;  // WHITE LED
+  constexpr uint8_t PWM_LED_CHANNEL_WHITE = 4;
+  //
+  // LED Ausgang für WLAN CONNECT
+  //
+  constexpr uint8_t LED_WLANOK = 2;  // WLAN OK
 
   //
   // die Schlüssel
