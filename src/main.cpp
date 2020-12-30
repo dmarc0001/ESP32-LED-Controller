@@ -26,5 +26,8 @@ void setup( void )
 
 void loop( void )
 {
+  //
+  // warten auf neustart nach Flash
+  //
   otaServer->loop();
 }
