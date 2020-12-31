@@ -9,7 +9,7 @@ namespace OTASrv
   //
   // Seriennummer des Programmes
   //
-  constexpr char serialStr[] = "20201231-0003";
+  constexpr char serialStr[] = "20201231-0007";
   //
   // für RGB LED mit gemeinsamer Anode
   //
@@ -53,19 +53,23 @@ namespace OTASrv
   // PWM/LED Ausgänge GPIO, nicht konfigurierbar
   //
   constexpr double PWM_LED_FREQ = 10000.0;      //! PWM Frequenz
-  constexpr uint8_t PWM_RESOLUTION = 12;        //! PWM Resolution 8, 10, 12, 15 BITS
-  constexpr uint32_t PWM_STEPS = 4096;          //! ATTENTION!! == 2^PWM_RESOLUTION
+  constexpr uint8_t PWM_RESOLUTION = 10;        //! PWM Resolution 8, 10, 12, 15 BITS
+  constexpr uint32_t PWM_STEPS = 1024;          //! ATTENTION!! == 2^PWM_RESOLUTION
   constexpr uint8_t PWM_LED_RED = 27;           //! GPIO Rote LED
   constexpr uint8_t PWM_LED_CHANNEL_RED = 0;    //! channel für rot
   constexpr uint8_t PWM_LED_GREEN = 26;         //! GPIO Grüne LED
   constexpr uint8_t PWM_LED_CHANNEL_GREEN = 1;  //! Channel für grün
   constexpr uint8_t PWM_LED_BLUE = 25;          //! GPIO blaue LED
-  constexpr uint8_t PWM_LED_CHANNEL_BLUE = 3;   //! Channel blaue LED
+  constexpr uint8_t PWM_LED_CHANNEL_BLUE = 2;   //! Channel blaue LED
   constexpr uint8_t PWM_LED_WHITE = 33;         //! Weiße LED
-  constexpr uint8_t PWM_LED_CHANNEL_WHITE = 4;  //! Channel weiße LED
+  constexpr uint8_t PWM_LED_CHANNEL_WHITE = 3;  //! Channel weiße LED
   //
   // LED Ausgang GPIO für WLAN CONNECT
   //
   constexpr uint8_t LED_WLANOK = 2;  // "WLAN OK" LED
+  //
+  // RGB Mode, d.h. nur Rot, Grün, Blau nutzen Weiß AUS
+  //
+  constexpr bool RGB_MODE = false;
 
 }  // namespace OTASrv

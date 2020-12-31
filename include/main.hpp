@@ -14,4 +14,5 @@ void initPrefs( OTASrv::OTAPrefs &prefs );
 void initPWM( LedControl::LedControlClass &ledControl );
 void initWiFi( OTASrv::OTAPrefs &prefs );
 void initMDNS( OTASrv::OTAPrefs &prefs );
+void demo_rgb( LedControl::LedControlClass &ledCtrl );
 AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &httpServer );

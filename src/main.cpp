@@ -72,7 +72,7 @@ void loop( void )
       {
         Serial.println( "\rWiFi reconnecting...               " );
         WiFi.reconnect();
-        delay( 500 );
+        delay( 300 );
         lastTimer = millis();
       }
     }
@@ -98,6 +98,13 @@ void loop( void )
       // den aktuellen zeitwert setzen
       //
       lastTimer = millis();
+      //
+      // DEMO
+      //
+      if ( millis() % 750 == 0 )
+      {
+        demo_rgb( ledControl );
+      }
     }
   }
   //
