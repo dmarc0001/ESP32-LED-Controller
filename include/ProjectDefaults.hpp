@@ -9,11 +9,15 @@ namespace OTASrv
   //
   // Seriennummer des Programmes
   //
-  constexpr char serialStr[] = "20201231-0002";
+  constexpr char serialStr[] = "20201231-0003";
   //
   // für RGB LED mit gemeinsamer Anode
   //
   constexpr bool rgbInverted = true;
+  //
+  // Zeit nach der bei WIFI-Verlust WiFi neu gestartet wird
+  //
+  constexpr unsigned long timeToResetWiFi = 1000 * 20;
 
   //
   // Version des Speichers bei Versionen, wenn änderungen an speicher

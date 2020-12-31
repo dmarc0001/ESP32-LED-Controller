@@ -45,42 +45,12 @@ void initPWM( LedControl::LedControlClass &ledControl )
  */
 void initWiFi( OTASrv::OTAPrefs &prefs )
 {
-  int counter = 30;
-
   Serial.println( "init WIFI... " );
   WiFi.mode( WIFI_STA );
   Serial.print( "Connecting to <" );
   Serial.print( prefs.getSSID() );
   Serial.println( ">..." );
   WiFi.begin( prefs.getSSID().c_str(), prefs.getPassword().c_str() );
-  while ( ( WiFi.status() != WL_CONNECTED ) && ( counter > 0 ) )
-  {
-    delay( 500 );
-    Serial.print( "connect timeout in " );
-    Serial.print( counter / 2 );
-    Serial.print( " secounds....\r" );
-    --counter;
-  }
-  Serial.print( "\r                                       \r" );
-
-  if ( counter <= 0 )
-  {
-    Serial.println( "can't connect WIFI, reset in 10 secounds...." );
-    for ( int i = 5; i > 0; --i )
-    {
-      Serial.print( "reset in " );
-      Serial.print( i );
-      Serial.print( " secounds....\r" );
-      delay( 1000 );
-    }
-    ESP.restart();
-  }
-  Serial.println( "" );
-  Serial.print( "Connected to <" );
-  Serial.print( prefs.getSSID() );
-  Serial.println( ">...OK" );
-  Serial.print( "IP address: " );
-  Serial.println( WiFi.localIP() );
 }
 
 /**
