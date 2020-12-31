@@ -43,7 +43,8 @@ void loop( void )
       Serial.print( prefs.getSSID() );
       Serial.println( ">..." );
       Serial.print( "IP address: " );
-      Serial.println( WiFi.localIP() );
+      Serial.print( WiFi.localIP() );
+      Serial.print( "         " );
       initMDNS( prefs );
       // otaServer = initHttpServer( prefs, httpServer );
       // signalisieren
