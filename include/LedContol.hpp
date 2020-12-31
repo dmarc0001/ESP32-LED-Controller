@@ -10,11 +10,12 @@ namespace LedControl
   class LedControlClass
   {
     private:
+    bool ledInited{ false };
     bool _standby;
 
     public:
     LedControlClass();
-    void standBy( bool standby = true );
-    void init( OTASrv::OTAPrefs &prefs );
+    void init();                          //! init Hardware
+    void standBy( bool standby = true );  //! alle LED auf STANDBY
   };
 }  // namespace LedControl
