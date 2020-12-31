@@ -9,15 +9,20 @@ namespace LedControl
   void LedControlClass::standBy( bool standby )
   {
     _standby = standby;
+    uint32_t nullValue = 0;
     if ( !ledInited )
     {
       return;
     }
     // alles aus
-    ledcWrite( OTASrv::PWM_LED_CHANNEL_RED, 0 );
-    ledcWrite( OTASrv::PWM_LED_CHANNEL_GREEN, 0 );
-    ledcWrite( OTASrv::PWM_LED_CHANNEL_BLUE, 0 );
-    ledcWrite( OTASrv::PWM_LED_CHANNEL_WHITE, 0 );
+    if ( OTASrv::rgbInverted )
+    {
+      nullValue = OTASrv::PWM_STEPS;
+    }
+    ledcWrite( OTASrv::PWM_LED_CHANNEL_RED, nullValue );
+    ledcWrite( OTASrv::PWM_LED_CHANNEL_GREEN, nullValue );
+    ledcWrite( OTASrv::PWM_LED_CHANNEL_BLUE, nullValue );
+    ledcWrite( OTASrv::PWM_LED_CHANNEL_WHITE, nullValue );
     digitalWrite( OTASrv::LED_WLANOK, LOW );
   }
 
@@ -44,10 +49,7 @@ namespace LedControl
     ledcAttachPin( PWM_LED_GREEN, PWM_LED_CHANNEL_GREEN );
     ledcAttachPin( PWM_LED_BLUE, PWM_LED_CHANNEL_BLUE );
     ledcAttachPin( PWM_LED_WHITE, PWM_LED_CHANNEL_WHITE );
-    // PWM contoll init
-    ledcWrite( PWM_LED_CHANNEL_RED, 0 );
-    ledcWrite( PWM_LED_CHANNEL_GREEN, 0 );
-    ledcWrite( PWM_LED_CHANNEL_BLUE, 0 );
-    ledcWrite( PWM_LED_CHANNEL_WHITE, 0 );
+    ledInited = true;
+    standBy();
   }
 }  // namespace LedControl
