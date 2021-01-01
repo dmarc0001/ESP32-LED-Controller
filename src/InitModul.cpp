@@ -86,7 +86,7 @@ void initMDNS( OTASrv::OTAPrefs &prefs )
 /**
  * initialisiere den Webserver
  */
-AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &httpServer )
+AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &httpServer, LedControl::LedControlClass *ledControl )
 {
   //
   // der root zugriff
@@ -99,7 +99,7 @@ AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &h
   //
   // API Server
   //
-  ApiJSONServer.begin( &httpServer, prefs.getApiUser().c_str(), prefs.getApiPassword().c_str() );
+  ApiJSONServer.begin( &httpServer, prefs.getApiUser().c_str(), prefs.getApiPassword().c_str(), ledControl );
   //
   // Webserver starten
   //

@@ -1,9 +1,10 @@
 #include "main.hpp"
 
-OTASrv::OTAPrefs prefs;
-AsyncWebServer httpServer( 80 );
-LedControl::LedControlClass ledControl;
-AsyncElegantOtaClass *otaServer;
+OTASrv::OTAPrefs prefs;                  //! Preferenzen
+AsyncWebServer httpServer( 80 );         //! der eigentliche Webserver Prozess
+LedControl::LedControlClass ledControl;  //! Objekt zur Kontrolle der LED
+AsyncElegantOtaClass *otaServer;         //! Zeiger auf den OTA Serverprozess für loop()
+LedControl::LedStatusClass ledPrefs;     //! aktuelle Preferenzwerte für LED (in Prozenzen)
 
 void setup( void )
 {
@@ -18,14 +19,35 @@ void setup( void )
   // alles im Programm initialisieren
   //
   initPrefs( prefs );
+  prefs.getLedStats( ledPrefs );
+  ledControl.standBy( false );
+  ledControl.setPercentStatus( ledPrefs );
   initWiFi( prefs );
-  otaServer = initHttpServer( prefs, httpServer );
+  otaServer = initHttpServer( prefs, httpServer, &ledControl );
 }
 
 void loop( void )
 {
   static volatile bool isOnline = false;
   static volatile unsigned long lastTimer = 0;
+  //
+  // warte immer etwa 2 Sekunden
+  //
+  if ( ( 0x07ffUL & millis() ) == 0 )
+  {
+    LedControl::LedStatusClass ledCurrent;
+    ledControl.getPercentStatus( ledCurrent );
+    if ( ledPrefs != ledCurrent )
+    {
+      //
+      // Da war was geändert => Sichern
+      //
+      Serial.println( "changed LED preerences: save to store..." );
+      prefs.setLedStats( ledCurrent );
+      prefs.getLedStats( ledPrefs );
+      Serial.println( "changed LED preerences: save to store...OK" );
+    }
+  }
   //
   // checke WiFi Status
   //
@@ -101,10 +123,10 @@ void loop( void )
       //
       // DEMO
       //
-      if ( millis() % 750 == 0 )
-      {
-        demo_rgb( ledControl );
-      }
+      // if ( millis() % 750 == 0 )
+      // {
+      //   demo_rgb( ledControl );
+      // }
     }
   }
   //

@@ -9,7 +9,7 @@ namespace OTASrv
   //
   // Seriennummer des Programmes
   //
-  constexpr char serialStr[] = "20201231-0007";
+  constexpr char serialStr[] = "20210101-0008";
   //
   // für RGB LED mit gemeinsamer Anode
   //
@@ -49,6 +49,10 @@ namespace OTASrv
   constexpr char apiPasswordKey[] = "apiPassword";        // api passwort
   constexpr char updateUserKey[] = "updateUser";          // update user
   constexpr char updatePasswordKey[] = "updatePassword";  // update password
+  constexpr char savedREDValueKey[] = "redValue";         // gespeicherter realer Wert für RED
+  constexpr char savedBLUEValueKey[] = "blueValue";       // gespeicherter realer Wert für BLUE
+  constexpr char savedGREENValueKey[] = "greenValue";     // gespeicherter realer Wert für GREEN
+  constexpr char savedWHITEValueKey[] = "whiteValue";     // gespeicherter realer Wert für WEISS
   //
   // PWM/LED Ausgänge GPIO, nicht konfigurierbar
   //
@@ -71,5 +75,22 @@ namespace OTASrv
   // RGB Mode, d.h. nur Rot, Grün, Blau nutzen Weiß AUS
   //
   constexpr bool RGB_MODE = false;
+
+  //
+  // Kommandos REAST API
+  //
+  constexpr char CMD_SET_RGBW[] = "set_rgbw";
+  constexpr char CMD_GET_RGBW[] = "get_rgbw";
+  constexpr char CMD_GET_STANDBY[] = "get_standby";
+  constexpr char CMD_SET_STANDBY[] = "set_standby";
+  constexpr char CMD_STANDBY[] = "standby";
+  constexpr char CMD_RGBW[] = "rgbw";
+
+  constexpr char CMD_COLOR_RED[] = "red";
+  constexpr char CMD_COLOR_GREEN[] = "green";
+  constexpr char CMD_COLOR_BLUE[] = "blue";
+  constexpr char CMD_COLOR_WHITE[] = "white";
+  constexpr char CMD_TRUE[] = "true";
+  constexpr char CMD_FALSE[] = "false";
 
 }  // namespace OTASrv

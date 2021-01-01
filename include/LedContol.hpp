@@ -7,6 +7,7 @@
 //
 namespace LedControl
 {
+  constexpr double EPSILON = 0.05;
   /**
    * Beschreibt den Status der LED-PWM Werte
    * Wertebereich abhängig von OTASrv::PWM_RESOLUTION
@@ -14,10 +15,20 @@ namespace LedControl
   class LedStatusClass
   {
     public:
-    double red{ 0 };
-    double green{ 0 };
-    double blue{ 0 };
-    double white{ 0 };
+    double red{ 0 };                          //! Speicher für ROT
+    double green{ 0 };                        //! Speicher für GRÜM
+    double blue{ 0 };                         //! Speicher für BLAU
+    double white{ 0 };                        //! Speicher für WEISS
+    bool operator==( LedStatusClass &other )  //! Überlade Vergleichsoperator (inline)
+    {
+      return ( ( abs( red - other.red ) < EPSILON ) && ( abs( green - other.green ) < EPSILON ) &&
+               ( abs( blue - other.blue ) < EPSILON ) && ( abs( white - other.white ) < EPSILON ) );
+    }
+    bool operator!=( LedStatusClass &other )  //! Überlade Vergleichsoperator (inline)
+    {
+      return ( !( ( abs( red - other.red ) < EPSILON ) && ( abs( green - other.green ) < EPSILON ) &&
+                  ( abs( blue - other.blue ) < EPSILON ) && ( abs( white - other.white ) < EPSILON ) ) );
+    }
   };
 
   /**
@@ -26,29 +37,19 @@ namespace LedControl
   class LedControlClass
   {
     private:
-    bool _ledInited{ false };           //! initiert?
-    bool _standby{ true };              //! standby (LED off aber keine Werte im Speicher berändert)
-    bool _rgbmode{ OTASrv::RGB_MODE };  //! NUR RGB LED nutzen? Voreinstellung aus ProjectDefaults
-    double fsteps{ static_cast< uint32_t >( OTASrv::PWM_STEPS ) };
+    bool _ledInited{ false };                                       //! initiert?
+    bool _standby{ true };                                          //! standby (LED off aber keine Werte im Speicher berändert)
+    bool _rgbmode{ OTASrv::RGB_MODE };                              //! NUR RGB LED nutzen? Voreinstellung aus ProjectDefaults
+    double fsteps{ static_cast< uint32_t >( OTASrv::PWM_STEPS ) };  //! Helligkeitsstufen
+    LedStatusClass _standbyVal;                                     //! Wert bei Standby gespeichert
 
     public:
     LedControlClass();
-    void init();                                                              //! init Hardware
-    void standBy( bool standby = true );                                      //! alle LED auf STANDBY
-    void getPercentStatus( LedStatusClass &status );                          //! gib den Status in Prozent
-    void setPercentStatus( LedStatusClass &status );                          //! setzt den Status in Prozent
-    void getStatus( LedStatusClass &status );                                 //! gib den aktuellen Status
-    void setStatus( LedStatusClass &status );                                 //! setzt die PWM Channel
-    void setRGBW( uint8_t red, uint8_t green, uint8_t blue, uint8_t white );  //! Setzt die WM Channel
-    void setRGB( uint8_t red, uint8_t green, uint8_t blue );                  //! Setz die PWM Channel
-    void setRed( uint8_t red );                                               //! setze PWM Channel für ROT
-    uint8_t getRed();                                                         //! hole PWM Channel für ROT
-    void setGreen( uint8_t red );                                             //! setze PWM Channel für Grün
-    uint8_t getGreen();                                                       //! hole PWM Channel für Grün
-    void setBlue( uint8_t blue );                                             //! setze PWM Channel für Blau
-    uint8_t getBlue();                                                        //! hole PWM Channel für Blau
-    void setWhite( uint8_t white );                                           //! setze PWM Channel für Weiß
-    uint8_t getWhite();                                                       //! hole PWM Channel für Weiß
+    void init();                                      //! init Hardware
+    void standBy( bool standby = true );              //! alle LED auf STANDBY
+    bool isStandBy();                                 //! ist alles auf  STANDBY
+    void getPercentStatus( LedStatusClass &status );  //! gib den Status in Prozent
+    void setPercentStatus( LedStatusClass &status );  //! setzt den Status in Prozent
 
     private:
     void readLedValuesToStatus( LedStatusClass &status );           //! lese PWM-Channels in Status

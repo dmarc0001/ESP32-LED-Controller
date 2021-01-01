@@ -1,6 +1,13 @@
 #pragma once
 #include <Preferences.h>
+#include "LedContol.hpp"
 #include "ProjectDefaults.hpp"
+
+namespace LedControl
+{
+  // Forward deklaration für die Klasse
+  class LedStatusClass;
+}  // namespace LedControl
 
 namespace OTASrv
 {
@@ -20,6 +27,8 @@ namespace OTASrv
     String getApiPassword();
     String getUpdateUser();
     String getUpdatePassword();
+    void getLedStats( LedControl::LedStatusClass & );
+    void setLedStats( LedControl::LedStatusClass & );
 
     private:
     bool makeDefaults();

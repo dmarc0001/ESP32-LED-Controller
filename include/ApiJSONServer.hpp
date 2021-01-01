@@ -17,9 +17,11 @@
 #endif
 
 #include <ArduinoJson.h>
+#include "AsyncJson.h"
 #include "ESPAsyncWebServer.h"
 #include "FS.h"
 #include "Hash.h"
+#include "LedContol.hpp"
 
 namespace APISrv
 {
@@ -27,23 +29,49 @@ namespace APISrv
   {
     private:
     AsyncWebServer *_server;
+    LedControl::LedControlClass *_ledControl;
     String _id = _getID();
     String _username = "";
     String _password = "";
     bool _authRequired = false;
     bool restartRequired = false;
+    String cmd_true{ OTASrv::CMD_TRUE };
+    String cmd_false{ OTASrv::CMD_FALSE };
 
     public:
     void setID( const char *id );
     String getID();
 
-    void begin( AsyncWebServer *server, const char *username = "", const char *password = "" );
+    void begin( AsyncWebServer *server,
+                const char *username = "",
+                const char *password = "",
+                LedControl::LedControlClass *ledControl = nullptr );
 
     private:
     String _getID();
+    AsyncWebServerRequest *onLedCommandPost( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total );
+
     AsyncWebServerRequest *onGetIdentity( AsyncWebServerRequest *request );
     AsyncWebServerRequest *onGetValues( AsyncWebServerRequest *request );
-    AsyncWebServerRequest *onSetValues( AsyncWebServerRequest *request );
-  };
+
+    void setLedValues( const JsonObject &jobj );
+    void getLedValues( JsonObject jobj );
+
+    private:
+    static const JsonString cmd_set_rgbw;
+    static const JsonString cmd_get_rgbw;
+    static const JsonString cmd_set_standby;
+    static const JsonString cmd_get_standby;
+    //
+    static const JsonString cmd_standby;
+    static const JsonString cmd_rgbw;
+    //
+    static const JsonString cmd_color_red;
+    static const JsonString cmd_color_green;
+    static const JsonString cmd_color_blue;
+    static const JsonString cmd_color_white;
+    // static const char *cmd_true;
+    // static const char *cmd_false;
+  };  // namespace APISrv
 
 }  // namespace APISrv
