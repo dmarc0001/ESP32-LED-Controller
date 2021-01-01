@@ -21,7 +21,6 @@ namespace LedControl
       // nix zu tun...
       return;
     }
-    _standby = standby;
     //
     // war schon was initialisiert?
     //
@@ -36,13 +35,12 @@ namespace LedControl
     {
       nullValue = OTASrv::PWM_STEPS;
     }
+    _standby = standby;
     //
     // Standby ein oder aus
     //
     if ( _standby )
     {
-      // Werte in den Speicher retten
-      getPercentStatus( _standbyVal );
       // LED löschen
       ledcWrite( OTASrv::PWM_LED_CHANNEL_RED, nullValue );
       ledcWrite( OTASrv::PWM_LED_CHANNEL_GREEN, nullValue );
@@ -99,6 +97,8 @@ namespace LedControl
    */
   void LedControlClass::getPercentStatus( LedStatusClass &status )
   {
+    status = _standbyVal;
+    /*
     if ( _standby )
     {
       // aus dem Speicher holen
@@ -117,6 +117,7 @@ namespace LedControl
     status.green = round( ( static_cast< double >( _realStatus.green ) * 100.0 ) / fsteps );
     status.blue = round( ( static_cast< double >( _realStatus.blue ) * 100.0 ) / fsteps );
     status.white = round( ( static_cast< double >( _realStatus.white ) * 100.0 ) / fsteps );
+    */
   }
 
   /**
@@ -124,15 +125,11 @@ namespace LedControl
    */
   void LedControlClass::setPercentStatus( LedStatusClass &status )
   {
+    _standbyVal = status;
     if ( _standby )
     {
-      // aus em Speicher holen
-      _standbyVal = status;
       return;
     }
-    //
-    // kein Standby
-    //
     LedStatusClass _realStatus;
     //
     // übersetzte in reale Werte
@@ -141,6 +138,9 @@ namespace LedControl
     _realStatus.green = round( ( fsteps * static_cast< double >( status.green ) ) / 100.0 );
     _realStatus.blue = round( ( fsteps * static_cast< double >( status.blue ) ) / 100.0 );
     _realStatus.white = round( ( fsteps * static_cast< double >( status.white ) ) / 100.0 );
+    //
+    // kein Standby
+    //
     writeLedValuesFromStatus( _realStatus );
   }
 

@@ -42,7 +42,11 @@ namespace APISrv
       _username = "";
       _password = "";
     }
-
+    _server->on( "/test", HTTP_GET, []( AsyncWebServerRequest *request ) {
+      AsyncWebServerResponse *response = request->beginResponse( 200, "text/html", DebugData::webSiteText );
+      response->addHeader( "Access-Control-Allow-Origin", "*" );
+      request->send( response );
+    } );
     //
     // Wer bist Du?
     //
@@ -58,6 +62,12 @@ namespace APISrv
         "/rest/led", HTTP_POST,
         []( AsyncWebServerRequest *request ) {
           // nothing and dont remove it
+          /*
+          AsyncWebServerResponse *response = request->beginResponse( 200, "text/plain", "Ok" );
+          response->addHeader( "Access-Control-Allow-Origin", "*" );
+          response->addHeader( "Vary", "Origin" );
+          request->send( response );
+          */
         },
         NULL,
         [ this ]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
@@ -86,6 +96,7 @@ namespace APISrv
     }
     else
     {
+      // response = request->beginResponse( 200, "application/json", "Ok" );
       // Serial.println( "api rest recived..." );
       String result;
       JsonObject jobj = doc.as< JsonObject >();
@@ -95,8 +106,9 @@ namespace APISrv
       //
       for ( auto p : jobj )
       {
-        Serial.print( "api rest cmd: " );
-        Serial.println( p.key().c_str() );
+        Serial.print( "api rest cmd: <" );
+        Serial.print( p.key().c_str() );
+        Serial.println( ">" );
         // is a JsonString
         if ( p.key() == cmd_set_rgbw )
         {
