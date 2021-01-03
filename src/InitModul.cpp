@@ -1,3 +1,4 @@
+#include "indexPage.h"
 #include "main.hpp"
 
 APISrv::ApiJSONServerClass ApiJSONServer;
@@ -91,7 +92,15 @@ AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &h
   //
   // der root zugriff
   //
-  httpServer.on( "/", HTTP_GET, []( AsyncWebServerRequest *request ) { request->send( 200, "text/plain", "Hi! I am ESP32." ); } );
+  httpServer.on( "/", HTTP_GET, []( AsyncWebServerRequest *request ) {
+    AsyncWebServerResponse *response =
+        request->beginResponse_P( 200, "text/html", APISrv::INDEX_PAGE_CONTENT, APISrv::INDEX_PAGE_SIZE );
+    response->addHeader( "Content-Encoding", "gzip" );
+    request->send( response );
+  } );
+
+  // httpServer.on( "/", HTTP_GET, []( AsyncWebServerRequest *request ) { request->send( 200, "text/plain", "Hi! I am ESP32." ); } );
+
   //
   // OTA Server
   //

@@ -1,6 +1,4 @@
 #pragma once
-#ifndef __PROJECT_DEFAULTS_HPP__
-#define __PROJECT_DEFAULTS_HPP__
 #include <Arduino.h>
 
 namespace OTASrv
@@ -96,76 +94,3 @@ namespace OTASrv
   constexpr char CMD_FALSE[] = "false";
 
 }  // namespace OTASrv
-
-namespace DebugData
-{
-  static const char webSiteText[] =
-      "\
-<html>\
-<header>\
-  <title>LED Controller</title>\
-  <script>\
-function init_page()\
-{\
-  var stb_button = document.getElementById('led_standby_button');\
-  if(stb_button)\
-  {\
-    stb_button.onclick = onStandbyButtonClick;\
-  }\
-  stb_button = document.getElementById('led_operate_button');\
-  if(stb_button)\
-  {\
-    stb_button.onclick = onOperateButtonClick;\
-  }\
-}\
-  function onStandbyButtonClick()\
-  {\
-    setStandby(true);\
-  }\
-\
-  function onOperateButtonClick()\
-  {\
-    setStandby(false);\
-  }\
-\
-  function setStandby(is_stb)\
-  {\
-    var xhr = new XMLHttpRequest();\
-    var url = '/rest/led';\
-    var stb = 'true';\
-    if(is_stb==false)\
-    {\
-      stb = 'false';\
-    }\
-    xhr.open('POST', url, true);\
-    xhr.setRequestHeader('Content-Type', 'application/json');\
-    xhr.onreadystatechange = function () {\
-        if (xhr.readyState === 4 && xhr.status === 200) {\
-            var json = JSON.parse(xhr.responseText);\
-            console.log('standby:' + json.standby + ', error:' + json.error);\
-        }\
-    };\
-    var data = JSON.stringify({'set_standby': stb});\
-    console.debug(data);\
-    xhr.send(data);\
-  }\
-  </script>\
-</header>\
-<body onload=\"init_page()\">\
-  <div>\
-    <h2>LED Config</h2>\
-  </div>\
-\
-  <div>\
-    Testbutton: <br />\
-    <input class=\"clickbutton\" id=\"led_standby_button\" type=\"button\" value=\"LED STANDBY\" /><br />\
-    <input class=\"clickbutton\" id=\"led_operate_button\" type=\"button\" value=\"LED OPERATE\" /><br />\
-  </div>\
-</body>\
-\
-</html>\
-  ";
-
-}  // namespace DebugData
-
-#endif

@@ -42,11 +42,6 @@ namespace APISrv
       _username = "";
       _password = "";
     }
-    _server->on( "/test", HTTP_GET, []( AsyncWebServerRequest *request ) {
-      AsyncWebServerResponse *response = request->beginResponse( 200, "text/html", DebugData::webSiteText );
-      response->addHeader( "Access-Control-Allow-Origin", "*" );
-      request->send( response );
-    } );
     //
     // Wer bist Du?
     //
@@ -85,6 +80,12 @@ namespace APISrv
     DynamicJsonDocument answerDoc( 1024 );
     JsonObject answer = answerDoc.to< JsonObject >();
     DeserializationError err = deserializeJson( doc, ( const char * ) data );
+    /*
+    AsyncWebServerResponse *response = request->beginResponse( 200, "application/json", content );
+    response->addHeader( "Access-Control-Allow-Origin", "*" );
+    response->addHeader( "Vary", "Origin" );
+    request->send( response );
+    */
     String content;
     if ( err )
     {
@@ -96,7 +97,11 @@ namespace APISrv
     }
     else
     {
-      // response = request->beginResponse( 200, "application/json", "Ok" );
+      // AsyncWebServerResponse *response = request->beginResponse( 200, "application/json", content );
+      // response->addHeader( "Access-Control-Allow-Origin", "*" );
+      // response->addHeader( "Vary", "Origin" );
+      // request->send( response );
+      //
       // Serial.println( "api rest recived..." );
       String result;
       JsonObject jobj = doc.as< JsonObject >();
