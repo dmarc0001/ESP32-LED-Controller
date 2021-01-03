@@ -1,0 +1,287 @@
+<!doctype html>
+<html>
+<header>
+  <title>LED Controller</title>
+  <style>
+    body {
+      background-color: #f0f0f0;
+      color: rgb(0, 0, 119);
+    }
+
+    input.clickbutton {
+      width: 60em;
+      height: 3em;
+      /*top,right,bottom,left*/
+      margin: 8px;
+      padding: 15px, 20px, 15px, 20px;
+      border: 0px none;
+      background-color: gray;
+      font-weight: bold;
+      font-size: larger;
+      /*color: darkblue;*/
+      border-radius: .5em;
+    }
+
+    input.clickbutton:hover {
+      background-color: honeydew;
+    }
+
+    div.workarea {
+      text-align: center;
+    }
+
+    /* switche */
+    .switch {
+      position: relative;
+      display: inline-block;
+      /*width: 60px;*/
+      width: 22%;
+      min-width: 1em;
+      height: 3em;
+      margin-bottom: 1em;
+      margin-left: 1%;
+      margin-right: 1%;
+    }
+
+    .switch.fullzize {
+      width: 98%;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 2.3em;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    .colred:before {
+      background-color: red;
+    }
+
+    .colgreen:before {
+      background-color: green;
+    }
+
+    .colblue:before {
+      background-color: blue;
+    }
+
+    .colwhite:before {
+      background-color: white;
+    }
+
+    .colpurple:before {
+      background-color: purple;
+    }
+
+    input:checked+.slider {
+      background-color: silver;
+    }
+
+    input.colred:checked+.slider {
+      background-color: lightcoral;
+    }
+
+    input.colgreen:checked+.slider {
+      background-color: lightgreen;
+    }
+
+    input.colblue:checked+.slider {
+      background-color: lightblue;
+    }
+
+    input.colwhite:checked+.slider {
+      background-color: white;
+    }
+
+    input.colpurple:checked+.slider {
+      background-color: rgb(237, 153, 248);
+    }
+
+    input:focus+.slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+
+    /*kleine Displays*/
+    @media all and (max-width: 75em) {
+      input.clickbutton {
+        width: 90%;
+        height: 5em;
+        margin: 8px, 2px, 8px, 2px;
+        padding: 5px, 2px, 5px, 2px;
+        border-radius: .8em;
+        font-size: 4em
+      }
+
+      .switch {
+        width: 98%;
+        min-width: 1em;
+        height: 9em;
+        margin-bottom: 1em;
+        margin-left: 1%;
+        margin-right: 1%;
+      }
+
+      .switch.fullzize {
+        width: 80%;
+      }
+
+      .slider:before {
+        height: 8.4em;
+      }
+
+
+    }
+
+    /* switche ende*/
+  </style>
+  <script>
+    function init_page() {
+      var elem = document.getElementById('led_standby_checkbox');
+      if (elem) {
+        elem.onclick = function () { setStandby(!this.checked) };
+      }
+      elem = document.getElementById('led_red_checkbox');
+      if (elem) {
+        elem.onclick = function () { switch_color("red", this.checked); };
+      }
+      elem = document.getElementById('led_green_checkbox');
+      if (elem) {
+        elem.onclick = function () { switch_color("green", this.checked); };
+      }
+      elem = document.getElementById('led_blue_checkbox');
+      if (elem) {
+        elem.onclick = function () { switch_color("blue", this.checked); };
+      }
+      elem = document.getElementById('led_white_checkbox');
+      if (elem) {
+        elem.onclick = function () { switch_color("white", this.checked); };
+      }
+    }
+    function setStandby(is_stb) {
+      var xhr = new XMLHttpRequest();
+      var url = '/rest/led';
+      var stb = 'true';
+      if (is_stb == false) {
+        stb = 'false';
+      }
+      xhr.open('POST', url, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var json = JSON.parse(xhr.responseText);
+          console.log('standby:' + json.standby + ', error:' + json.error);
+        }
+      };
+      var data = JSON.stringify({ 'set_standby': stb });
+      console.debug(data);
+      xhr.send(data);
+    }
+
+    function switch_color(color, value) {
+      console.debug("color: " + color + " to " + value);
+      var percent = 0;
+      if (value) {
+        percent = 100;
+      }
+      //
+      var xhr = new XMLHttpRequest();
+      var url = '/rest/led';
+      xhr.open('POST', url, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var json = JSON.parse(xhr.responseText);
+          console.log('standby:' + json.standby + ', error:' + json.error);
+        }
+      };
+      if (color == 'red') {
+        var data = JSON.stringify({ 'set_rgbw': { "red": percent } });
+      }
+      else if (color == 'green') {
+        var data = JSON.stringify({ 'set_rgbw': { "green": percent } });
+      }
+      if (color == 'blue') {
+        var data = JSON.stringify({ 'set_rgbw': { "blue": percent } });
+      }
+      if (color == 'white') {
+        var data = JSON.stringify({ 'set_rgbw': { "white": percent } });
+      }
+      /*
+      var data = JSON.stringify({
+        'set_rgbw': {
+          "red": 0,
+          "green": 100,
+          "blue": 80,
+          "white": 20
+        }
+      });
+      */
+      console.debug(data);
+      xhr.send(data);
+    }
+
+
+  </script>
+</header>
+
+<body onload="init_page()">
+  <div>
+    <h2>LED Config</h2>
+  </div>
+  <div class="workarea">
+    <label class="switch fullzize">
+      <input class="colpurple" type="checkbox" id="led_standby_checkbox" checked>
+      <span class="slider colpurple"></span>
+    </label>
+  </div>
+  <div class="workarea">
+    <label class="switch">
+      <input class="colred" type="checkbox" id="led_red_checkbox" checked>
+      <span class="slider colred"></span>
+    </label>
+    <label class="switch">
+      <input class="colgreen" type="checkbox" id="led_green_checkbox" checked>
+      <span class="slider colgreen"></span>
+    </label>
+    <label class="switch">
+      <input class="colblue" type="checkbox" id="led_blue_checkbox" checked>
+      <span class="slider colblue"></span>
+    </label>
+    <label class="switch">
+      <input class="colwhite" type="checkbox" id="led_white_checkbox" checked>
+      <span class="slider colwhite"></span>
+    </label>
+  </div>
+</body>
+
+</html>

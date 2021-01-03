@@ -79,6 +79,23 @@ namespace OTASrv
     return ( getString( updatePasswordKey ) );
   }
 
+  void OTAPrefs::getLedStats( LedControl::LedStatusClass &status )
+  {
+    status.red = getDouble( savedREDValueKey, 100.0 );
+    status.green = getDouble( savedGREENValueKey, 100.0 );
+    status.blue = getDouble( savedBLUEValueKey, 100.0 );
+    status.white = getDouble( savedWHITEValueKey, 100.0 );
+  }
+
+  void OTAPrefs::setLedStats( LedControl::LedStatusClass &status )
+  {
+    // default RGBW in Prozent
+    putDouble( savedREDValueKey, status.red );
+    putDouble( savedGREENValueKey, status.green );
+    putDouble( savedBLUEValueKey, status.blue );
+    putDouble( savedWHITEValueKey, status.white );
+  }
+
   bool OTAPrefs::makeDefaults()
   {
     //
@@ -106,6 +123,11 @@ namespace OTASrv
     putString( updateUserKey, updateUser );
     // update password
     putString( updatePasswordKey, updatePassword );
+    // default RGBW in Prozent
+    putDouble( savedREDValueKey, 100.0 );
+    putDouble( savedGREENValueKey, 100.0 );
+    putDouble( savedBLUEValueKey, 100.0 );
+    putDouble( savedWHITEValueKey, 100.0 );
     //
     Serial.println( "preferences initialize...DONE" );
 

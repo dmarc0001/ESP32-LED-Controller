@@ -1,0 +1,9 @@
+
+/identity           GET  -> OTA ID
+/update             GET  -> OTA GUI
+/update             POST -> OTA internal
+
+/rest/identity      GET  -> REST Server identity
+/rest/led           GET  -> REST LED Status
+/rest/led           POST -> REST LEDCommand
+

@@ -48,14 +48,16 @@ class AsyncElegantOtaClass
       _password = "";
     }
 
-    _server->on( "/update/identity", HTTP_GET, [ & ]( AsyncWebServerRequest *request ) {
-      if ( _authRequired )
+    _server->on( "/identity", HTTP_GET, [ & ]( AsyncWebServerRequest *request ) {
+    /*
+    if ( _authRequired )
+    {
+      if ( !request->authenticate( _username.c_str(), _password.c_str() ) )
       {
-        if ( !request->authenticate( _username.c_str(), _password.c_str() ) )
-        {
-          return request->requestAuthentication();
-        }
+        return request->requestAuthentication();
       }
+    }
+    */
 #if defined( ESP8266 )
       request->send( 200, "application/json", "{\"id\": \"" + _id + "\", \"hardware\": \"ESP8266\"}" );
 #elif defined( ESP32 )

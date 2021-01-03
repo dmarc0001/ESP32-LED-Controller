@@ -1,3 +1,4 @@
+#include "indexPage.h"
 #include "main.hpp"
 
 APISrv::ApiJSONServerClass ApiJSONServer;
@@ -86,12 +87,20 @@ void initMDNS( OTASrv::OTAPrefs &prefs )
 /**
  * initialisiere den Webserver
  */
-AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &httpServer )
+AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &httpServer, LedControl::LedControlClass *ledControl )
 {
   //
   // der root zugriff
   //
-  httpServer.on( "/", HTTP_GET, []( AsyncWebServerRequest *request ) { request->send( 200, "text/plain", "Hi! I am ESP32." ); } );
+  httpServer.on( "/", HTTP_GET, []( AsyncWebServerRequest *request ) {
+    AsyncWebServerResponse *response =
+        request->beginResponse_P( 200, "text/html", APISrv::INDEX_PAGE_CONTENT, APISrv::INDEX_PAGE_SIZE );
+    response->addHeader( "Content-Encoding", "gzip" );
+    request->send( response );
+  } );
+
+  // httpServer.on( "/", HTTP_GET, []( AsyncWebServerRequest *request ) { request->send( 200, "text/plain", "Hi! I am ESP32." ); } );
+
   //
   // OTA Server
   //
@@ -99,7 +108,7 @@ AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &h
   //
   // API Server
   //
-  ApiJSONServer.begin( &httpServer, prefs.getApiUser().c_str(), prefs.getApiPassword().c_str() );
+  ApiJSONServer.begin( &httpServer, prefs.getApiUser().c_str(), prefs.getApiPassword().c_str(), ledControl );
   //
   // Webserver starten
   //
@@ -109,4 +118,77 @@ AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &h
   httpServer.begin();
   Serial.println( "HTTP httpServer started" );
   return ( &AsyncElegantOTA );
+}
+
+void demo_rgb( LedControl::LedControlClass &ledCtrl )
+{
+  static LedControl::LedStatusClass status;
+  static bool count_down = false;
+  //
+  // demo der RGB Funktionen
+  //
+  if ( count_down )
+  {
+    //
+    // Abwärts zählen
+    //
+    if ( status.red > 0.0 )
+    {
+      status.red -= 1.5;
+    }
+    else if ( status.white > 0.0 )
+    {
+      status.white -= 1.5;
+    }
+    else if ( status.green > 0.0 )
+    {
+      status.green -= 1.5;
+    }
+    else if ( status.blue > 0.0 )
+    {
+      status.blue -= 1.5;
+    }
+    else
+    {
+      count_down = false;
+    }
+  }
+  else
+  {
+    //
+    // aufwärts zählen
+    //
+    if ( status.red < 100.0 )
+    {
+      status.red += 1.0;
+    }
+    else if ( status.white < 100.0 )
+    {
+      status.white += 1.0;
+    }
+    else if ( status.green > 100.0 )
+    {
+      status.green += 1.0;
+    }
+    else if ( status.blue < 100.0 )
+    {
+      status.blue += 1.0;
+    }
+    else
+    {
+      count_down = true;
+    }
+  }
+  /*
+  Serial.print( "VALUES R:" );
+  Serial.print( status.red );
+  Serial.print( ", G:" );
+  Serial.print( status.green );
+  Serial.print( ", B:" );
+  Serial.print( status.blue );
+  Serial.print( ", W:" );
+  Serial.print( status.white );
+  Serial.println( "." );
+  */
+  ledCtrl.setPercentStatus( status );
 }
