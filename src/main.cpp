@@ -120,13 +120,6 @@ void loop( void )
       // den aktuellen zeitwert setzen
       //
       lastTimer = millis();
-      //
-      // DEMO
-      //
-      // if ( millis() % 750 == 0 )
-      // {
-      //   demo_rgb( ledControl );
-      // }
     }
   }
   //
@@ -134,3 +127,4 @@ void loop( void )
   //
   otaServer->loop();
 }
+
