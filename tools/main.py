@@ -15,25 +15,15 @@ __license__ = 'GPL'
 __version__ = '0.2'
 
 """
- elegentWebpage.h 
- const uint8_t ELEGANT_HTML[] PROGMEM = { XXXX } in Datei extraieren
- python main.py --decode --infile extraierte_datei.txt --outfile gezipptes_archiv.gz
-
- Archiv entzippen, html bearbeiten, neue zip datei anlegen
-
- python main.py --encode --infile neue_datei.gz --outfile new_datdump.txt
-
- die datei new_datdump.txt ind die headerdatei einbringen
-
- neu compiliereen
-
+ 
 """
 
 
 def decode_to_source(infile, outfile):
     counter = 0
-    compressed_file = 'temp_' + infile + '.gz';
-    print("decode hexdump file <{0}> to source file <{1}>".format(infile, outfile))
+    compressed_file = 'temp_' + infile + '.gz'
+    print("decode hexdump file <{0}> to source file <{1}>".format(
+        infile, outfile))
     #
     # zuest hex zu binärformat (gzip file)
     #
@@ -86,8 +76,9 @@ def decode_to_source(infile, outfile):
 
 def encode_to_hexdump(infile, outfile):
     counter = 0
-    compressed_file = 'temp_' + infile + '.gz';
-    print("encode ascii source file <{0}> to hexdump file <{1}>".format(infile, outfile))
+    compressed_file = 'temp_' + infile + '.gz'
+    print("encode ascii source file <{0}> to hexdump file <{1}>".format(
+        infile, outfile))
     #
     # erst komprimieren
     #
@@ -140,6 +131,7 @@ def encode_to_hexdump(infile, outfile):
     remove(compressed_file)
     print("compressed file size: {} bytes".format(file_size))
 
+
 def main():
     infile = None
     outfile = "output.file"
@@ -151,11 +143,13 @@ def main():
     #
     parser = ArgumentParser(fromfile_prefix_chars='@',
                             description='decode/code for c program',
-                            epilog="from Dirk Marciniak\n");
+                            epilog="from Dirk Marciniak\n")
     parser.add_argument("--infile", type=str, help="input file")
-    parser.add_argument("--outfile", type=str, help="output file")
-    parser.add_argument("--decode", default=False, action='store_true', help="decode hexdump file to source file")
-    parser.add_argument("--encode", default=False, action='store_true', help="encode source file to hexdump file")
+    parser.add_argument("--outfile", type=str, help="output file will")
+    parser.add_argument("--decode", default=False, action='store_true',
+                        help="decode hexdump file to source file")
+    parser.add_argument("--encode", default=False, action='store_true',
+                        help="encode source file to hexdump file")
     #
     args = parser.parse_args()
     #
@@ -202,5 +196,3 @@ def main():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     main()
-
-
