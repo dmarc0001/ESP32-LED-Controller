@@ -9,7 +9,7 @@ namespace OTASrv
   //
   // Seriennummer des Programmes
   //
-  constexpr char serialStr[] = "20210101-0008";
+  constexpr char serialStr[] = "20210104-0002";
   //
   // für RGB LED mit gemeinsamer Anode
   //

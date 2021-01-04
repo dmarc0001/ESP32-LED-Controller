@@ -6,24 +6,16 @@
     body {
       background-color: #f0f0f0;
       color: rgb(0, 0, 119);
+      font-family: Arial, Helvetica, sans-serif;
     }
 
-    input.clickbutton {
-      width: 60em;
-      height: 3em;
-      /*top,right,bottom,left*/
-      margin: 8px;
-      padding: 15px, 20px, 15px, 20px;
-      border: 0px none;
-      background-color: gray;
-      font-weight: bold;
-      font-size: larger;
-      /*color: darkblue;*/
-      border-radius: .5em;
-    }
-
-    input.clickbutton:hover {
-      background-color: honeydew;
+    div.complete {
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
     }
 
     div.workarea {
@@ -34,17 +26,12 @@
     .switch {
       position: relative;
       display: inline-block;
-      /*width: 60px;*/
-      width: 22%;
+      width: 85%;
       min-width: 1em;
       height: 3em;
       margin-bottom: 1em;
       margin-left: 1%;
       margin-right: 1%;
-    }
-
-    .switch.fullzize {
-      width: 98%;
     }
 
     .switch input {
@@ -72,57 +59,18 @@
       width: 26px;
       left: 4px;
       bottom: 4px;
-      background-color: white;
+      background-color: rgb(0, 56, 240);
       -webkit-transition: .4s;
       transition: .4s;
     }
 
-    .colred:before {
-      background-color: red;
-    }
-
-    .colgreen:before {
-      background-color: green;
-    }
-
-    .colblue:before {
-      background-color: blue;
-    }
-
-    .colwhite:before {
-      background-color: white;
-    }
-
-    .colpurple:before {
-      background-color: purple;
-    }
 
     input:checked+.slider {
-      background-color: silver;
-    }
-
-    input.colred:checked+.slider {
-      background-color: lightcoral;
-    }
-
-    input.colgreen:checked+.slider {
-      background-color: lightgreen;
-    }
-
-    input.colblue:checked+.slider {
-      background-color: lightblue;
-    }
-
-    input.colwhite:checked+.slider {
-      background-color: white;
-    }
-
-    input.colpurple:checked+.slider {
-      background-color: rgb(237, 153, 248);
+      background-color: #6db466;
     }
 
     input:focus+.slider {
-      box-shadow: 0 0 1px #2196F3;
+      box-shadow: 0 0 1px #21f33d;
     }
 
     input:checked+.slider:before {
@@ -131,19 +79,22 @@
       transform: translateX(26px);
     }
 
+    /*color picker*/
+    input.color_picker {
+      width: 45%;
+      height: 5em;
+      padding: .6em;
+    }
+
+    label.color_picker {
+      font-weight: bold;
+    }
+
+
     /*kleine Displays*/
     @media all and (max-width: 75em) {
-      input.clickbutton {
-        width: 90%;
-        height: 5em;
-        margin: 8px, 2px, 8px, 2px;
-        padding: 5px, 2px, 5px, 2px;
-        border-radius: .8em;
-        font-size: 4em
-      }
-
       .switch {
-        width: 98%;
+        width: 85%;
         min-width: 1em;
         height: 9em;
         margin-bottom: 1em;
@@ -151,42 +102,197 @@
         margin-right: 1%;
       }
 
-      .switch.fullzize {
-        width: 80%;
-      }
-
       .slider:before {
         height: 8.4em;
       }
 
+      /*color picker*/
+      input.color_picker {
+        width: 75%;
+        height: 10em;
+        padding: .6em;
+
+      }
+
+      label.color_picker {
+        font-size: 4em
+      }
 
     }
 
     /* switche ende*/
   </style>
   <script>
+    var lastChange = 10;
+    var busyLock = 10;
+    var busyLockStart = 30;
+
     function init_page() {
       var elem = document.getElementById('led_standby_checkbox');
       if (elem) {
         elem.onclick = function () { setStandby(!this.checked) };
       }
-      elem = document.getElementById('led_red_checkbox');
+      elem = document.getElementById("color_picker");
       if (elem) {
-        elem.onclick = function () { switch_color("red", this.checked); };
+        elem.addEventListener("input", colorInput, false);
+        elem.addEventListener("change", colorChange, false);
       }
-      elem = document.getElementById('led_green_checkbox');
-      if (elem) {
-        elem.onclick = function () { switch_color("green", this.checked); };
-      }
-      elem = document.getElementById('led_blue_checkbox');
-      if (elem) {
-        elem.onclick = function () { switch_color("blue", this.checked); };
-      }
-      elem = document.getElementById('led_white_checkbox');
-      if (elem) {
-        elem.onclick = function () { switch_color("white", this.checked); };
-      }
+      setInterval(function () {
+        if (lastChange > 0) { lastChange-- };
+        if (busyLock > 0) { busyLock-- };
+      }, 500);
     }
+
+    function colorChange(elem) {
+      console.debug("color entry change");
+      lastChange = 0;
+      busyLock = 0;
+      colorInput(elem);
+      document.getElementById("color_picker_area").style.backgroundColor = /*"#f0f0f0";*/ "initial";
+    }
+
+    function colorInput(elem) {
+      var theColor = elem.target.value;
+      console.debug("color entry input: " + theColor);
+      document.getElementById("color_picker_area").style.backgroundColor = theColor;
+      // nur alle 0.5 Sekunden zulassen
+      if (lastChange > 0 || busyLock > 0) {
+        return;
+      }
+      lastChange = 1;
+      /*hex string to int*/
+      var rgbColor = parseInt(theColor.substring(1), 16);
+      /* convert int to rgbw */
+      var hsv = rgb2hsv(rgbColor);
+      var rgbw = hsv2rgbw(hsv);
+      /*values store in percent*/
+      red_val = (rgbw[0] * 100.0) / 255.0;
+      green_val = (rgbw[1] * 100.0) / 255.0;
+      blue_val = (rgbw[2] * 100.0) / 255.0;
+      white_val = (rgbw[3] * 100.0) / 255.0;
+      /* set in percent to MC */
+      console.debug("rgbw color: " + red_val.toFixed(2) + ", " + green_val.toFixed(2) + ", " + blue_val.toFixed(2) + ", " + white_val.toFixed(2));
+      set_rgbw(red_val.toFixed(2), green_val.toFixed(2), blue_val.toFixed(2), white_val.toFixed(2))
+    }
+
+    function rgb2hsv(rgb) {
+
+      let R, G, B, H, S, V;
+
+      R = (rgb >> 16) & 0xFF;
+      G = (rgb >> 8) & 0xFF;
+      B = rgb & 0xFF;
+
+      const M = Math.max(R, G, B);
+      const m = Math.min(R, G, B);
+
+      V = M / 255; //range to [0, 1]
+      S = M === 0 ? 0 : (1 - m / M);
+
+      const num = R - 0.5 * G - 0.5 * B;
+      const den = Math.sqrt(Math.pow(R, 2) + Math.pow(G, 2) + Math.pow(B, 2) - R * G - R * B - G * B);
+      let div;
+      if (den === 0) {
+        div = 0;
+      } else {
+        div = num / den;
+      }
+      const count = Math.acos(div) / Math.PI * 180;
+      if (G >= B) {
+        H = count;
+      } else {
+        H = 360 - count;
+      }
+
+      return [H, S, V]
+    };
+
+    function hsv2rgb(hsv) {
+
+      let R, G, B;
+
+      let H = hsv[0];
+      let S = hsv[1];
+      let V = hsv[2];
+
+      if (H === 0) {
+        R = V + 2 * V * S;
+        G = V - V * S;
+        B = V - V * S;
+      } else if (0 < H < 120) {
+        R = V + V * S * Math.cos(H) / Math.cos(60 - H);
+        G = V + V * S * (1 - Math.cos(H) / Math.cos(60 - H));
+        B = V - V * S;
+      } else if (H === 120) {
+        R = V - V * S;
+        G = V + 2 * V * S;
+        B = V - V * S;
+      } else if (120 < H < 240) {
+        R = V - V * S;
+        G = V + V * S * Math.cos(H - 120) / Math.cos(180 - H);
+        B = V + V * S * (1 - Math.cos(H - 120) / Math.cos(180 - H));
+      } else if (H === 240) {
+        R = V - V * S;
+        G = V - V * S;
+        B = V + 2 * V * S;
+      } else {
+        R = V + V * S * (1 - Math.cos(H - 240) / Math.cos(300 - H));
+        G = V - V * S;
+        B = V + V * S * Math.cos(H - 240) / Math.cos(300 - H);
+      }
+
+      return [R, G, B]
+    };
+
+    function hsv2rgbw(hsv) {
+      let r, g, b, w;
+      let cos_h, cos_1047_h;
+
+      let H = hsv[0];
+      let S = hsv[1];
+      let V = hsv[2];
+
+      H = 3.14159 * H / 180; // Convert to radians.
+      S = S > 0 ? (S < 1 ? S : 1) : 0; // clamp S and I to interval [0,1]
+      V = V > 0 ? (V < 1 ? V : 1) : 0;
+
+      if (H < 2.09439) {
+        cos_h = Math.cos(H);
+        cos_1047_h = Math.cos(1.047196667 - H);
+        r = S * 255 * V / 3 * (1 + cos_h / cos_1047_h);
+        g = S * 255 * V / 3 * (1 + (1 - cos_h / cos_1047_h));
+        b = 0;
+        w = 255 * (1 - S) * V;
+      } else if (H < 4.188787) {
+        H = H - 2.09439;
+        cos_h = Math.cos(H);
+        cos_1047_h = Math.cos(1.047196667 - H);
+        g = S * 255 * V / 3 * (1 + cos_h / cos_1047_h);
+        b = S * 255 * V / 3 * (1 + (1 - cos_h / cos_1047_h));
+        r = 0;
+        w = 255 * (1 - S) * V;
+      } else {
+        H = H - 4.188787;
+        cos_h = Math.cos(H);
+        cos_1047_h = Math.cos(1.047196667 - H);
+        b = S * 255 * V / 3 * (1 + cos_h / cos_1047_h);
+        r = S * 255 * V / 3 * (1 + (1 - cos_h / cos_1047_h));
+        g = 0;
+        w = 255 * (1 - S) * V;
+      }
+
+      return [r, g, b, w]
+    };
+
+    function toNum(arr) {
+      let length = arr.length;
+      let result = 0;
+      arr.forEach((item, index) => {
+        result += Math.round(item) * Math.pow(2, (length - 1 - index) * 8);
+      });
+      return result;
+    };
+
     function setStandby(is_stb) {
       var xhr = new XMLHttpRequest();
       var url = '/rest/led';
@@ -207,13 +313,9 @@
       xhr.send(data);
     }
 
-    function switch_color(color, value) {
-      console.debug("color: " + color + " to " + value);
-      var percent = 0;
-      if (value) {
-        percent = 100;
-      }
-      //
+    function set_rgbw(r, g, b, w) {
+      busyLock = busyLockStart;
+
       var xhr = new XMLHttpRequest();
       var url = '/rest/led';
       xhr.open('POST', url, true);
@@ -221,66 +323,32 @@
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
           var json = JSON.parse(xhr.responseText);
-          console.log('standby:' + json.standby + ', error:' + json.error);
+          console.log('response from controller:' + json.set_rgbw);
+          busyLock = 0;
         }
       };
-      if (color == 'red') {
-        var data = JSON.stringify({ 'set_rgbw': { "red": percent } });
-      }
-      else if (color == 'green') {
-        var data = JSON.stringify({ 'set_rgbw': { "green": percent } });
-      }
-      if (color == 'blue') {
-        var data = JSON.stringify({ 'set_rgbw': { "blue": percent } });
-      }
-      if (color == 'white') {
-        var data = JSON.stringify({ 'set_rgbw': { "white": percent } });
-      }
-      /*
-      var data = JSON.stringify({
-        'set_rgbw': {
-          "red": 0,
-          "green": 100,
-          "blue": 80,
-          "white": 20
-        }
-      });
-      */
+      var data = JSON.stringify({ 'set_rgbw': { "red": r, "green": g, "blue": b, "white": w } });
       console.debug(data);
       xhr.send(data);
     }
-
-
   </script>
 </header>
 
-<body onload="init_page()">
-  <div>
-    <h2>LED Config</h2>
-  </div>
-  <div class="workarea">
-    <label class="switch fullzize">
-      <input class="colpurple" type="checkbox" id="led_standby_checkbox" checked>
-      <span class="slider colpurple"></span>
-    </label>
-  </div>
-  <div class="workarea">
-    <label class="switch">
-      <input class="colred" type="checkbox" id="led_red_checkbox" checked>
-      <span class="slider colred"></span>
-    </label>
-    <label class="switch">
-      <input class="colgreen" type="checkbox" id="led_green_checkbox" checked>
-      <span class="slider colgreen"></span>
-    </label>
-    <label class="switch">
-      <input class="colblue" type="checkbox" id="led_blue_checkbox" checked>
-      <span class="slider colblue"></span>
-    </label>
-    <label class="switch">
-      <input class="colwhite" type="checkbox" id="led_white_checkbox" checked>
-      <span class="slider colwhite"></span>
-    </label>
+<body onload="init_page()" id="color_picker_area">
+  <div class="complete">
+    <div class="workarea">
+      <label class="color_picker" for="led_standby_checkbox">LED STANDBY</label>
+      <br />
+      <label class="switch">
+        <input type="checkbox" id="led_standby_checkbox" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="workarea">
+      <label class="color_picker" for="color_picker">LED COLOR</label>
+      <br />
+      <input class="color_picker" type="color" id="color_picker" name="color_picker" value="#b0b0b0">
+    </div>
   </div>
 </body>
 
