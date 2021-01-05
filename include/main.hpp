@@ -11,7 +11,7 @@
 #include "nvs_flash.h"
 
 void initPrefs( OTASrv::OTAPrefs &prefs );
-void initPWM( LedControl::LedControlClass &ledControl );
+void initPWM( LedControl::LedControlClass &ledControl, OTASrv::OTAPrefs &prefs );
 void initWiFi( OTASrv::OTAPrefs &prefs );
 void initMDNS( OTASrv::OTAPrefs &prefs );
 AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &httpServer, LedControl::LedControlClass *ledControl );

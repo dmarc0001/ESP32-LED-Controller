@@ -27,6 +27,9 @@ namespace OTASrv
     String getApiPassword();
     String getUpdateUser();
     String getUpdatePassword();
+    bool getIsLEDInvers();
+    uint8_t getPwmResolution();
+    double getPwmFreq();
     void getLedStats( LedControl::LedStatusClass & );
     void setLedStats( LedControl::LedStatusClass & );
 

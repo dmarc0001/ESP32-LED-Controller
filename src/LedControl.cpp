@@ -33,7 +33,7 @@ namespace LedControl
     //
     if ( OTASrv::rgbInverted )
     {
-      nullValue = OTASrv::PWM_STEPS;
+      nullValue = static_cast< uint32_t >( _fsteps );
     }
     _standby = standby;
     //
@@ -65,12 +65,18 @@ namespace LedControl
   /**
    * Initialisiere die LED Hardware
    */
-  void LedControlClass::init()
+  void LedControlClass::init( OTASrv::OTAPrefs &prefs )
   {
     //
     // Namensraum der PREFS "ProjectDefaults.hpp"
     //
     using namespace OTASrv;
+    // Einstelungen lesen
+    _inverted = prefs.getIsLEDInvers();
+    uint8_t res = prefs.getPwmResolution();
+    _fsteps = pow( 2.0, static_cast< double >( res ) );
+    _steps = static_cast< uint32_t >( _fsteps );
+    double pwmfreq = prefs.getPwmFreq();
     //
     // WLAN Lampe
     //
@@ -78,10 +84,10 @@ namespace LedControl
     digitalWrite( LED_WLANOK, LOW );
 
     // configure LED PWM functionalitites
-    ledcSetup( PWM_LED_CHANNEL_RED, PWM_LED_FREQ, PWM_RESOLUTION );
-    ledcSetup( PWM_LED_CHANNEL_GREEN, PWM_LED_FREQ, PWM_RESOLUTION );
-    ledcSetup( PWM_LED_CHANNEL_BLUE, PWM_LED_FREQ, PWM_RESOLUTION );
-    ledcSetup( PWM_LED_CHANNEL_WHITE, PWM_LED_FREQ, PWM_RESOLUTION );
+    ledcSetup( PWM_LED_CHANNEL_RED, pwmfreq, res );
+    ledcSetup( PWM_LED_CHANNEL_GREEN, pwmfreq, res );
+    ledcSetup( PWM_LED_CHANNEL_BLUE, pwmfreq, res );
+    ledcSetup( PWM_LED_CHANNEL_WHITE, pwmfreq, res );
 
     // attach the channel to the GPIO2 to be controlled
     ledcAttachPin( PWM_LED_RED, PWM_LED_CHANNEL_RED );
@@ -98,26 +104,6 @@ namespace LedControl
   void LedControlClass::getPercentStatus( LedStatusClass &status )
   {
     status = _standbyVal;
-    /*
-    if ( _standby )
-    {
-      // aus dem Speicher holen
-      status = _standbyVal;
-      return;
-    }
-    //
-    // Kein Standby
-    //
-    LedStatusClass _realStatus;
-    //
-    // lese die Werte ein
-    //
-    readLedValuesToStatus( _realStatus );
-    status.red = round( ( static_cast< double >( _realStatus.red ) * 100.0 ) / fsteps );
-    status.green = round( ( static_cast< double >( _realStatus.green ) * 100.0 ) / fsteps );
-    status.blue = round( ( static_cast< double >( _realStatus.blue ) * 100.0 ) / fsteps );
-    status.white = round( ( static_cast< double >( _realStatus.white ) * 100.0 ) / fsteps );
-    */
   }
 
   /**
@@ -134,10 +120,10 @@ namespace LedControl
     //
     // übersetzte in reale Werte
     //
-    _realStatus.red = round( ( fsteps * static_cast< double >( status.red ) ) / 100.0 );
-    _realStatus.green = round( ( fsteps * static_cast< double >( status.green ) ) / 100.0 );
-    _realStatus.blue = round( ( fsteps * static_cast< double >( status.blue ) ) / 100.0 );
-    _realStatus.white = round( ( fsteps * static_cast< double >( status.white ) ) / 100.0 );
+    _realStatus.red = round( ( _fsteps * static_cast< double >( status.red ) ) / 100.0 );
+    _realStatus.green = round( ( _fsteps * static_cast< double >( status.green ) ) / 100.0 );
+    _realStatus.blue = round( ( _fsteps * static_cast< double >( status.blue ) ) / 100.0 );
+    _realStatus.white = round( ( _fsteps * static_cast< double >( status.white ) ) / 100.0 );
     //
     // kein Standby
     //
@@ -150,14 +136,10 @@ namespace LedControl
   void LedControlClass::readLedValuesToStatus( LedStatusClass &status )
   {
     using namespace OTASrv;
-    status.red = static_cast< double >( OTASrv::PWM_STEPS ? OTASrv::PWM_STEPS - ledcRead( PWM_LED_CHANNEL_RED )
-                                                          : ledcRead( PWM_LED_CHANNEL_RED ) );
-    status.green = static_cast< double >( OTASrv::PWM_STEPS ? OTASrv::PWM_STEPS - ledcRead( PWM_LED_CHANNEL_GREEN )
-                                                            : ledcRead( PWM_LED_CHANNEL_GREEN ) );
-    status.blue = static_cast< double >( OTASrv::PWM_STEPS ? OTASrv::PWM_STEPS - ledcRead( PWM_LED_CHANNEL_BLUE )
-                                                           : ledcRead( PWM_LED_CHANNEL_BLUE ) );
-    status.white = static_cast< double >( OTASrv::PWM_STEPS ? OTASrv::PWM_STEPS - ledcRead( PWM_LED_CHANNEL_WHITE )
-                                                            : ledcRead( PWM_LED_CHANNEL_WHITE ) );
+    status.red = static_cast< double >( _inverted ? _steps - ledcRead( PWM_LED_CHANNEL_RED ) : ledcRead( PWM_LED_CHANNEL_RED ) );
+    status.green = static_cast< double >( _inverted ? _steps - ledcRead( PWM_LED_CHANNEL_GREEN ) : ledcRead( PWM_LED_CHANNEL_GREEN ) );
+    status.blue = static_cast< double >( _inverted ? _steps - ledcRead( PWM_LED_CHANNEL_BLUE ) : ledcRead( PWM_LED_CHANNEL_BLUE ) );
+    status.white = static_cast< double >( _inverted ? _steps - ledcRead( PWM_LED_CHANNEL_WHITE ) : ledcRead( PWM_LED_CHANNEL_WHITE ) );
   }
 
   /**
@@ -169,14 +151,10 @@ namespace LedControl
 
     if ( !_standby )
     {
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_RED,
-                 static_cast< uint32_t >( OTASrv::rgbInverted ? OTASrv::PWM_STEPS - status.red : status.red ) );
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_GREEN,
-                 static_cast< uint32_t >( OTASrv::rgbInverted ? OTASrv::PWM_STEPS - status.green : status.green ) );
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_BLUE,
-                 static_cast< uint32_t >( OTASrv::rgbInverted ? OTASrv::PWM_STEPS - status.blue : status.blue ) );
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_WHITE,
-                 static_cast< uint32_t >( OTASrv::rgbInverted ? OTASrv::PWM_STEPS - status.white : status.white ) );
+      ledcWrite( OTASrv::PWM_LED_CHANNEL_RED, static_cast< uint32_t >( _inverted ? _steps - status.red : status.red ) );
+      ledcWrite( OTASrv::PWM_LED_CHANNEL_GREEN, static_cast< uint32_t >( _inverted ? _steps - status.green : status.green ) );
+      ledcWrite( OTASrv::PWM_LED_CHANNEL_BLUE, static_cast< uint32_t >( _inverted ? _steps - status.blue : status.blue ) );
+      ledcWrite( OTASrv::PWM_LED_CHANNEL_WHITE, static_cast< uint32_t >( _inverted ? _steps - status.white : status.white ) );
       yield();
       delay( 40 );
     }

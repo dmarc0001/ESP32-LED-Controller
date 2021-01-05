@@ -8,17 +8,18 @@ LedControl::LedStatusClass ledPrefs;     //! aktuelle Preferenzwerte für LED (i
 
 void setup( void )
 {
-  initPWM( ledControl );
   //
-  // für das Debugging
+  // alles im Programm initialisieren
   //
   Serial.begin( 115200 );
   Serial.println( "" );
   Serial.println( "controller is starting..." );
-  //
-  // alles im Programm initialisieren
-  //
+  // Einstellungen
   initPrefs( prefs );
+  initPWM( ledControl, prefs );
+  //
+  // für das Debugging
+  //
   prefs.getLedStats( ledPrefs );
   ledControl.standBy( false );
   ledControl.setPercentStatus( ledPrefs );
@@ -127,4 +128,3 @@ void loop( void )
   //
   otaServer->loop();
 }
-

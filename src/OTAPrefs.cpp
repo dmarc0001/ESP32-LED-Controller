@@ -27,15 +27,6 @@ namespace OTASrv
         makeDefaults();
       }
     }
-    if ( getString( serialKey, "0000" ) != String( serialStr ) )
-    {
-      //
-      // aktualisieren! Neue Firmware
-      //
-      putString( serialKey, serialStr );
-      // TODO: alle Strings prüfen, könnten nun auch geändert sein
-    }
-
     return ret;
   }
 
@@ -51,7 +42,7 @@ namespace OTASrv
 
   String OTAPrefs::getSerialStr()
   {
-    return ( getString( serialKey, "0000" ) );
+    return ( String( serialStr ) );
   }
 
   String OTAPrefs::getHostname()
@@ -77,6 +68,21 @@ namespace OTASrv
   String OTAPrefs::getUpdatePassword()
   {
     return ( getString( updatePasswordKey ) );
+  }
+
+  bool OTAPrefs::getIsLEDInvers()
+  {
+    return ( getBool( invertedLEDKey, false ) );
+  }
+
+  uint8_t OTAPrefs::getPwmResolution()
+  {
+    return ( getUChar( pwmResolutionKey, 8 ) );
+  }
+
+  double OTAPrefs::getPwmFreq()
+  {
+    return ( getDouble( pwmFreqKey, 5000 ) );
   }
 
   void OTAPrefs::getLedStats( LedControl::LedStatusClass &status )
@@ -113,16 +119,20 @@ namespace OTASrv
     putString( passwordKey, defaultPassword );
     // welcher Hostname für das nDNS
     putString( hostnameKey, hostname );
-    // Seriennummer / version
-    putString( serialKey, serialStr );
-    // api user name
-    putString( apiUserKey, apiUser );
-    // api passwort
-    putString( apiPasswordKey, apiPassword );
+    // api user name is null
+    putString( apiUserKey, "" );
+    // api passwort is null
+    putString( apiPasswordKey, "" );
     // update user
     putString( updateUserKey, updateUser );
     // update password
     putString( updatePasswordKey, updatePassword );
+    // led invers oder nicht als Voreinstellung
+    putBool( invertedLEDKey, rgbInverted );
+    // default auflösung der PWM-Timer
+    putUChar( pwmResolutionKey, PWM_RESOLUTION );
+    // default pwm frewuenz
+    putDouble( pwmFreqKey, PWM_LED_FREQ );
     // default RGBW in Prozent
     putDouble( savedREDValueKey, 100.0 );
     putDouble( savedGREENValueKey, 100.0 );

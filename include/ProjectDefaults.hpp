@@ -9,7 +9,7 @@ namespace OTASrv
   //
   // Seriennummer des Programmes
   //
-  constexpr char serialStr[] = "20210104-0002";
+  constexpr char serialStr[] = "20210104-0003";
   //
   // für RGB LED mit gemeinsamer Anode
   //
@@ -23,7 +23,7 @@ namespace OTASrv
   // Version des Speichers bei Versionen, wenn änderungen an speicher
   // muss die Version erhöhr werden und im code reagiert werden
   //
-  constexpr int prefsVersion = 1;
+  constexpr int prefsVersion = 2;
   //
   // Konfigurierbare Parameter
   //
@@ -32,33 +32,34 @@ namespace OTASrv
   constexpr char defaultSSID[] = "Controller";                 //! SSID für WLAN
   constexpr char defaultPassword[] = "serverSaturnRinge2610";  //! Passwort für WLAN
   constexpr char hostname[] = "OTA-Server";                    //! Eigener Hostname für MDNS
-  constexpr char apiUser[] = "admin";                          //! Name des Users API Schnittstelle
-  constexpr char apiPassword[] = "admin";                      //! Passwort Users API Schnittstelle
   constexpr char updateUser[] = "admin";                       //! name des OTA Berechtigten
   constexpr char updatePassword[] = "admin";                   //! Passwort des OTA Berechtigten
+  constexpr double PWM_LED_FREQ = 10000.0;                     //! PWM Frequenz default
+  constexpr uint8_t PWM_RESOLUTION = 10;                       //! PWM Resolution 8, 10, 12, 15 BITS default
   //
   // die Schlüsselnamen für den Speicher
+  // Einstelungen für den Controller
   //
-  constexpr char wasInitKey[] = "wasInit";                // wurde schon initialisiert?
-  constexpr char prefsVersionKey[] = "prefsVersion";      // welche Version der Einstellungen?
-  constexpr char SSIDKey[] = "SSID";                      // an welchem WLAN anmelden?
-  constexpr char passwordKey[] = "password";              // welches PW im WLAN
-  constexpr char hostnameKey[] = "hostname";              // welcher Hostname für das nDNS
-  constexpr char serialKey[] = "serial";                  // Seriennummer / version
-  constexpr char apiUserKey[] = "apiUser";                // api user name
-  constexpr char apiPasswordKey[] = "apiPassword";        // api passwort
-  constexpr char updateUserKey[] = "updateUser";          // update user
-  constexpr char updatePasswordKey[] = "updatePassword";  // update password
-  constexpr char savedREDValueKey[] = "redValue";         // gespeicherter realer Wert für RED
-  constexpr char savedBLUEValueKey[] = "blueValue";       // gespeicherter realer Wert für BLUE
-  constexpr char savedGREENValueKey[] = "greenValue";     // gespeicherter realer Wert für GREEN
-  constexpr char savedWHITEValueKey[] = "whiteValue";     // gespeicherter realer Wert für WEISS
+  constexpr char wasInitKey[] = "wasInit";                //! wurde schon initialisiert?
+  constexpr char prefsVersionKey[] = "prefsVersion";      //! welche Version der Einstellungen?
+  constexpr char SSIDKey[] = "SSID";                      //! an welchem WLAN anmelden (konfigurierbar)?
+  constexpr char passwordKey[] = "password";              //! welches PW im WLAN (konfigurierbar)
+  constexpr char hostnameKey[] = "hostname";              //! welcher Hostname für das nDNS (konfigurierbar)
+  constexpr char apiUserKey[] = "apiUser";                //! api user name (konfigurierbar, default null)
+  constexpr char apiPasswordKey[] = "apiPassword";        //! api passwort (konfigurierbar, default null)
+  constexpr char updateUserKey[] = "updateUser";          //! update user (konfigurierbar)
+  constexpr char updatePasswordKey[] = "updatePassword";  //! update password (konfigurierbar)
+  constexpr char savedREDValueKey[] = "redValue";         //! gespeicherter prozentualer Wert für RED als double
+  constexpr char savedBLUEValueKey[] = "blueValue";       //! gespeicherter prozentualer Wert für BLUE als double
+  constexpr char savedGREENValueKey[] = "greenValue";     //! gespeicherter prozentualer Wert für GREEN als double
+  constexpr char savedWHITEValueKey[] = "whiteValue";     //! gespeicherter prozentualer Wert für WEISS als double
+  constexpr char invertedLEDKey[] = "ledInvers";          //! LED invers (evtl wg. gemeinsamer Anode nötig)
+  constexpr char pwmResolutionKey[] = "pwmRes";           //! PWM Auflösung (8, 10, 12, oder 15 Bit)
+  constexpr char pwmFreqKey[] = "pwmFreq";                //! PWM Frequenz (konfigurierbar)
+
   //
   // PWM/LED Ausgänge GPIO, nicht konfigurierbar
   //
-  constexpr double PWM_LED_FREQ = 10000.0;      //! PWM Frequenz
-  constexpr uint8_t PWM_RESOLUTION = 10;        //! PWM Resolution 8, 10, 12, 15 BITS
-  constexpr uint32_t PWM_STEPS = 1024;          //! ATTENTION!! == 2^PWM_RESOLUTION
   constexpr uint8_t PWM_LED_RED = 27;           //! GPIO Rote LED
   constexpr uint8_t PWM_LED_CHANNEL_RED = 0;    //! channel für rot
   constexpr uint8_t PWM_LED_GREEN = 26;         //! GPIO Grüne LED

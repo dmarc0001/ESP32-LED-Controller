@@ -2,6 +2,12 @@
 #include "OTAPrefs.hpp"
 #include "ProjectDefaults.hpp"
 
+namespace OTASrv
+{
+  // Vorwärtsdeklaration
+  class OTAPrefs;
+}  // namespace OTASrv
+
 //
 // Klasse für PWM LED Control
 //
@@ -37,15 +43,19 @@ namespace LedControl
   class LedControlClass
   {
     private:
-    bool _ledInited{ false };                                       //! initiert?
-    bool _standby{ true };                                          //! standby (LED off aber keine Werte im Speicher berändert)
-    bool _rgbmode{ OTASrv::RGB_MODE };                              //! NUR RGB LED nutzen? Voreinstellung aus ProjectDefaults
-    double fsteps{ static_cast< uint32_t >( OTASrv::PWM_STEPS ) };  //! Helligkeitsstufen
-    LedStatusClass _standbyVal;                                     //! Wert bei Standby gespeichert
+    bool _ledInited{ false };           //! initiert?
+    bool _standby{ true };              //! standby (LED off aber keine Werte im Speicher berändert)
+    bool _rgbmode{ OTASrv::RGB_MODE };  //! NUR RGB LED nutzen? Voreinstellung aus ProjectDefaults
+    bool _inverted{ false };            //! LED'S invertiert?
+    double _fsteps{ 255.0 };            //! Helligkeitsstufen
+    uint32_t _steps{ 255 };             //! Helligkeitsstufen in 32 uint
+
+    LedStatusClass _standbyVal;  //! Wert bei Standby gespeichert
+    // double fsteps{ static_cast< uint32_t >( OTASrv::PWM_STEPS ) };  //! Helligkeitsstufen
 
     public:
     LedControlClass();
-    void init();                                      //! init Hardware
+    void init( OTASrv::OTAPrefs &prefs );             //! init Hardware
     void standBy( bool standby = true );              //! alle LED auf STANDBY
     bool isStandBy();                                 //! ist alles auf  STANDBY
     void getPercentStatus( LedStatusClass &status );  //! gib den Status in Prozent
