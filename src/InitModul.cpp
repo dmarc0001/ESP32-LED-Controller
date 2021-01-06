@@ -1,4 +1,4 @@
-#include "indexPage.h"
+#include "indexPage.hpp"
 #include "main.hpp"
 
 APISrv::ApiJSONServerClass ApiJSONServer;
@@ -108,7 +108,7 @@ AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &h
   //
   // API Server
   //
-  ApiJSONServer.begin( &httpServer, prefs.getApiUser().c_str(), prefs.getApiPassword().c_str(), ledControl );
+  ApiJSONServer.begin( &httpServer, prefs, ledControl );
   //
   // Webserver starten
   //

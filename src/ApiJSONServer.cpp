@@ -1,4 +1,5 @@
 #include "ApiJSONServer.hpp"
+#include "configPage.hpp"
 
 namespace APISrv
 {
@@ -22,30 +23,57 @@ namespace APISrv
   //
   //
   //
-  void ApiJSONServerClass::begin( AsyncWebServer *server,
-                                  const char *username,
-                                  const char *password,
-                                  LedControl::LedControlClass *ledControl )
+  void ApiJSONServerClass::begin( AsyncWebServer *server, OTASrv::OTAPrefs &prefs, LedControl::LedControlClass *ledControl )
   {
     _server = server;
     _ledControl = ledControl;
 
-    if ( strlen( username ) > 0 )
+    if ( prefs.getApiUser().isEmpty() )
     {
-      _authRequired = true;
-      _username = username;
-      _password = password;
+      _apiAuthRequired = false;
+      _apiUserName = "";
+      _apiPassword = "";
     }
     else
     {
-      _authRequired = false;
-      _username = "";
-      _password = "";
+      _apiAuthRequired = true;
+      _apiUserName = prefs.getApiUser().c_str();
+      _apiPassword = prefs.getApiPassword().c_str();
+    }
+
+    if ( prefs.getUpdateUser().isEmpty() )
+    {
+      _configAuthRequired = false;
+      _configUserName = "";
+      _configPassword = "";
+    }
+    else
+    {
+      _configAuthRequired = true;
+      _configUserName = prefs.getUpdateUser().c_str();
+      _configPassword = prefs.getUpdatePassword().c_str();
     }
     //
     // Wer bist Du?
     //
     _server->on( "/rest/identity", HTTP_GET, [ & ]( AsyncWebServerRequest *request ) { onGetIdentity( request ); } );
+    //
+    // Controller config
+    //
+    _server->on( "/config", HTTP_GET, [ & ]( AsyncWebServerRequest *request ) {
+      AsyncWebServerResponse *response =
+          request->beginResponse_P( 200, "text/html", APISrv::CONFIG_PAGE_CONTENT, APISrv::CONFIG_PAGE_SIZE );
+      if ( _configAuthRequired )
+      {
+        if ( !request->authenticate( _configUserName.c_str(), _configPassword.c_str() ) )
+        {
+          return request->requestAuthentication();
+        }
+      }
+      response->addHeader( "Content-Encoding", "gzip" );
+      request->send( response );
+    } );
+
     //
     // LED Statusabfrage
     //

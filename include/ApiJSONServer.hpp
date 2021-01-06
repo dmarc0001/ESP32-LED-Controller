@@ -31,9 +31,12 @@ namespace APISrv
     AsyncWebServer *_server;
     LedControl::LedControlClass *_ledControl;
     String _id = _getID();
-    String _username = "";
-    String _password = "";
-    bool _authRequired = false;
+    String _apiUserName = "";
+    String _apiPassword = "";
+    bool _apiAuthRequired = false;
+    String _configUserName = "";
+    String _configPassword = "";
+    bool _configAuthRequired = false;
     bool restartRequired = false;
     String cmd_true{ OTASrv::CMD_TRUE };
     String cmd_false{ OTASrv::CMD_FALSE };
@@ -42,10 +45,7 @@ namespace APISrv
     void setID( const char *id );
     String getID();
 
-    void begin( AsyncWebServer *server,
-                const char *username = "",
-                const char *password = "",
-                LedControl::LedControlClass *ledControl = nullptr );
+    void begin( AsyncWebServer *server, OTASrv::OTAPrefs &prefs, LedControl::LedControlClass *ledControl = nullptr );
 
     private:
     String _getID();
