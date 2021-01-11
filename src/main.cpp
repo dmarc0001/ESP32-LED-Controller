@@ -66,7 +66,7 @@ void loop( void )
       Serial.println( ">..." );
       Serial.print( "IP address: " );
       Serial.print( WiFi.localIP() );
-      Serial.print( "         " );
+      Serial.println( "         " );
       initMDNS( prefs );
       // otaServer = initHttpServer( prefs, httpServer );
       // signalisieren

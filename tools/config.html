@@ -164,6 +164,21 @@
     }
 
     function save_fw_access() {
+      var access_uid = null;
+      var access_password = null;
+
+      var elem = document.getElementById('fw_access_uid');
+      if (elem) {
+        if (elem.value > 0) {
+          access_uid = elem.value;
+        }
+      }
+      var elem = document.getElementById('fw_access_password');
+      if (elem) {
+        if (elem.value > 0) {
+          access_uid = elem.value;
+        }
+      }
 
     }
 

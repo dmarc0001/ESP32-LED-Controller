@@ -2,7 +2,7 @@
 
 namespace OTASrv
 {
-  const char *OTAPrefs::serialStr = "20210111-203256-build-0074";
+  const char *OTAPrefs::serialStr = "20210111-203731-build-0075";
 
   OTAPrefs::OTAPrefs() : Preferences()
   {
