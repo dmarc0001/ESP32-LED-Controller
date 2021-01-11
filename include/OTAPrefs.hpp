@@ -14,6 +14,8 @@ namespace OTASrv
   class OTAPrefs : public Preferences
   {
     private:
+    static const char *serialStr;
+
     public:
     OTAPrefs();
     ~OTAPrefs();
@@ -28,8 +30,11 @@ namespace OTASrv
     String getUpdateUser();
     String getUpdatePassword();
     bool getIsLEDInvers();
+    void setIsLEDInvers( bool is_invers );
     uint8_t getPwmResolution();
+    void setPwmResolution( uint8_t res );
     double getPwmFreq();
+    void setPwmFreq( double newFreq );
     void getLedStats( LedControl::LedStatusClass & );
     void setLedStats( LedControl::LedStatusClass & );
 

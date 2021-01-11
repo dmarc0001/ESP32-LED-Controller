@@ -18,15 +18,17 @@ namespace APISrv
   const JsonString ApiJSONServerClass::cmd_color_green{ OTASrv::CMD_COLOR_GREEN };
   const JsonString ApiJSONServerClass::cmd_color_blue{ OTASrv::CMD_COLOR_BLUE };
   const JsonString ApiJSONServerClass::cmd_color_white{ OTASrv::CMD_COLOR_WHITE };
-  // const char *ApiJSONServerClass::cmd_true{ OTASrv::CMD_TRUE };
-  // const char *ApiJSONServerClass::cmd_false{ OTASrv::CMD_FALSE };
   //
+  const JsonString ApiJSONServerClass::cmd_pwm_resolution{ OTASrv::CMD_PWM_RESOLUTION };
+  const JsonString ApiJSONServerClass::cmd_pwm_frequence{ OTASrv::CMD_PWM_FREQUENCE };
+  const JsonString ApiJSONServerClass::cmd_pwm_is_inverse{ OTASrv::CMD_PWM_INVERSE };
   //
   //
   void ApiJSONServerClass::begin( AsyncWebServer *server, OTASrv::OTAPrefs &prefs, LedControl::LedControlClass *ledControl )
   {
     _server = server;
     _ledControl = ledControl;
+    _prefs = &prefs;
 
     if ( prefs.getApiUser().isEmpty() )
     {
@@ -60,7 +62,7 @@ namespace APISrv
     //
     // Controller config
     //
-    _server->on( "/config", HTTP_GET, [ & ]( AsyncWebServerRequest *request ) {
+    _server->on( "/rest/config", HTTP_GET, [ & ]( AsyncWebServerRequest *request ) {
       AsyncWebServerResponse *response =
           request->beginResponse_P( 200, "text/html", APISrv::CONFIG_PAGE_CONTENT, APISrv::CONFIG_PAGE_SIZE );
       if ( _configAuthRequired )
@@ -74,6 +76,16 @@ namespace APISrv
       request->send( response );
     } );
 
+    _server->on(
+        "/rest/pwm", HTTP_POST,
+        []( AsyncWebServerRequest *request ) {
+          // nothing and dont remove it
+        },
+        NULL,
+        [ this ]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
+          return ( onPwmCommandPost( request, data, len, index, total ) );
+        } );
+
     //
     // LED Statusabfrage
     //
@@ -85,17 +97,142 @@ namespace APISrv
         "/rest/led", HTTP_POST,
         []( AsyncWebServerRequest *request ) {
           // nothing and dont remove it
-          /*
-          AsyncWebServerResponse *response = request->beginResponse( 200, "text/plain", "Ok" );
-          response->addHeader( "Access-Control-Allow-Origin", "*" );
-          response->addHeader( "Vary", "Origin" );
-          request->send( response );
-          */
         },
         NULL,
         [ this ]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
           return ( onLedCommandPost( request, data, len, index, total ) );
         } );
+  }
+  AsyncWebServerRequest *ApiJSONServerClass::onPwmCommandPost( AsyncWebServerRequest *request,
+                                                               uint8_t *data,
+                                                               size_t len,
+                                                               size_t index,
+                                                               size_t total )
+  {
+    DynamicJsonDocument doc( 1024 );
+    DynamicJsonDocument answerDoc( 1024 );
+    JsonObject answer = answerDoc.to< JsonObject >();
+    DeserializationError err = deserializeJson( doc, ( const char * ) data );
+    String content;
+    bool have_to_boot = false;
+    if ( err )
+    {
+      // das ging schief
+      answer[ "error" ] = err.c_str();
+      serializeJson( doc, content );
+      Serial.println( content );
+      request->send( 404, "application/json", content );
+      return request;
+    }
+    String result;
+    JsonObject jobj = doc.as< JsonObject >();
+    //
+    // Auflösung?
+    //
+    if ( jobj.containsKey( cmd_pwm_resolution ) )
+    {
+      uint8_t pwm_res = jobj[ cmd_pwm_resolution ].as< uint8_t >();
+      if ( pwm_res >= 8 )
+      {
+        Serial.print( "pwm cmd: <" );
+        Serial.print( cmd_pwm_resolution.c_str() );
+        Serial.print( "> : " );
+        Serial.println( pwm_res );
+        if ( _prefs->getPwmResolution() != pwm_res )
+        {
+          //
+          // geändert, das Gerät muss neu gestartet werden
+          //
+          have_to_boot = true;
+          _prefs->setPwmResolution( pwm_res );
+        }
+        answer[ cmd_pwm_resolution ] = "OK";
+      }
+    }
+    //
+    // PWM Frequenz
+    //
+    if ( jobj.containsKey( cmd_pwm_frequence ) )
+    {
+      String pwmValStr = jobj[ cmd_pwm_frequence ].as< String >();
+      pwmValStr.trim();
+      if ( 0 != pwmValStr.compareTo( "null" ) )
+      {
+        double pwm_freq = jobj[ cmd_pwm_frequence ].as< double >();
+        //
+        if ( pwm_freq >= OTASrv::PWM_MIN_FREQENCE && pwm_freq <= OTASrv::PWM_MAX_FREQENCE )
+        {
+          Serial.print( "pwm cmd: <" );
+          Serial.print( cmd_pwm_frequence.c_str() );
+          Serial.print( "> : " );
+          Serial.println( pwm_freq );
+          if ( _prefs->getPwmFreq() != pwm_freq )
+          {
+            //
+            // geändert, das Gerät muss neu gestartet werden
+            //
+            have_to_boot = true;
+            _prefs->setPwmFreq( pwm_freq );
+          }
+          answer[ cmd_pwm_frequence ] = "OK";
+        }
+      }
+      else
+      {
+        answer[ "status" ] = "frequency too high!";
+      }
+    }
+    //
+    // LED's invertiert?
+    //
+    if ( jobj.containsKey( cmd_pwm_is_inverse ) )
+    {
+      String pwmValStr = jobj[ cmd_pwm_is_inverse ].as< String >();
+      pwmValStr.trim();
+      if ( 0 != pwmValStr.compareTo( "null" ) )
+      {
+        bool pwm_inv = jobj[ cmd_pwm_is_inverse ].as< bool >();
+        Serial.print( "pwm cmd: <" );
+        Serial.print( cmd_pwm_is_inverse.c_str() );
+        Serial.print( "> : " );
+        Serial.println( pwm_inv );
+        //
+        if ( _prefs->getIsLEDInvers() != pwm_inv )
+        {
+          Serial.print( "pwm cmd: <" );
+          Serial.print( cmd_pwm_is_inverse.c_str() );
+          Serial.print( "> : " );
+          Serial.println( pwm_inv );
+          //
+          // geändert, das Gerät muss neu gestartet werden
+          //
+          have_to_boot = true;
+          _prefs->setIsLEDInvers( pwm_inv );
+        }
+
+        answer[ cmd_pwm_is_inverse ] = "OK";
+      }
+    }
+    //
+    // Generelle Rückantwort
+    //
+    if ( !answer.containsKey( "status" ) )
+    {
+      answer[ "status" ] = "OK";
+    }
+    // serializeJson( answer, content );
+    serializeJsonPretty( answer, content );
+    request->send( 200, "application/json", content );
+    //
+    // wenn PWM geändert wurde muss der Controller neu starten
+    //
+    if ( have_to_boot )
+    {
+      yield();
+      restartRequired = true;
+    }
+    // Ende Gelände, nur einen beantworten
+    return request;
   }
 
   AsyncWebServerRequest *ApiJSONServerClass::onLedCommandPost( AsyncWebServerRequest *request,
@@ -122,102 +259,100 @@ namespace APISrv
       serializeJson( doc, content );
       Serial.println( content );
       request->send( 404, "application/json", content );
+      return request;
     }
-    else
+    // AsyncWebServerResponse *response = request->beginResponse( 200, "application/json", content );
+    // response->addHeader( "Access-Control-Allow-Origin", "*" );
+    // response->addHeader( "Vary", "Origin" );
+    // request->send( response );
+    //
+    // Serial.println( "api rest recived..." );
+    String result;
+    JsonObject jobj = doc.as< JsonObject >();
+    //
+    // Alle Keys erfragen (im Allgemeinen sollte es nur einer sein)
+    // p ist JSonPair
+    //
+    for ( auto p : jobj )
     {
-      // AsyncWebServerResponse *response = request->beginResponse( 200, "application/json", content );
-      // response->addHeader( "Access-Control-Allow-Origin", "*" );
-      // response->addHeader( "Vary", "Origin" );
-      // request->send( response );
-      //
-      // Serial.println( "api rest recived..." );
-      String result;
-      JsonObject jobj = doc.as< JsonObject >();
-      //
-      // Alle Keys erfragen (im Allgemeinen sollte es nur einer sein)
-      // p ist JSonPair
-      //
-      for ( auto p : jobj )
+      Serial.print( "api rest cmd: <" );
+      Serial.print( p.key().c_str() );
+      Serial.println( ">" );
+      // is a JsonString
+      if ( p.key() == cmd_set_rgbw )
       {
-        Serial.print( "api rest cmd: <" );
-        Serial.print( p.key().c_str() );
-        Serial.println( ">" );
-        // is a JsonString
-        if ( p.key() == cmd_set_rgbw )
+        //
+        // SETZE LED auf Werte...
+        //
+        setLedValues( p.value().as< JsonObject >() );
+        answer[ cmd_set_rgbw ] = "OK";
+        // serializeJson( answer, content );
+        serializeJsonPretty( answer, content );
+        request->send( 200, "application/json", content );
+        // Ende Gelände, nur einen beantworten
+        return request;
+      }
+      else if ( p.key() == cmd_get_rgbw )
+      {
+        //
+        // gib LED Werte zurück
+        //
+        answer[ cmd_standby ] = _ledControl->isStandBy();
+        JsonObject ledValObj = answer.createNestedObject( cmd_rgbw );
+        getLedValues( ledValObj );
+        serializeJsonPretty( answer, content );
+        request->send( 200, "application/json", content );
+        // Ende Gelände, nur einen beantworten
+        return request;
+      }
+      else if ( p.key() == cmd_get_standby )
+      {
+        //
+        // gib STANDBY Wert zurück
+        //
+        answer[ cmd_standby ] = _ledControl->isStandBy();
+        serializeJsonPretty( answer, content );
+        request->send( 200, "application/json", content );
+        // Ende Gelände, nur einen beantworten
+        return request;
+      }
+      else if ( p.key() == cmd_set_standby )
+      {
+        //
+        // setzt STANDBY Wert
+        //
+        String stbyVal( p.value().as< String >() );
+        // vergleiche
+        if ( stbyVal == cmd_true )
         {
           //
-          // SETZE LED auf Werte...
+          // SETZEN
           //
-          setLedValues( p.value().as< JsonObject >() );
-          answer[ cmd_set_rgbw ] = "OK";
-          // serializeJson( answer, content );
-          serializeJsonPretty( answer, content );
-          request->send( 200, "application/json", content );
-          // Ende Gelände, nur einen beantworten
-          return request;
+          _ledControl->standBy( true );
         }
-        else if ( p.key() == cmd_get_rgbw )
+        else if ( stbyVal == cmd_false )
         {
           //
-          // gib LED Werte zurück
+          // LÖSCHEN
           //
-          answer[ cmd_standby ] = _ledControl->isStandBy();
-          JsonObject ledValObj = answer.createNestedObject( cmd_rgbw );
-          getLedValues( ledValObj );
-          serializeJsonPretty( answer, content );
-          request->send( 200, "application/json", content );
-          // Ende Gelände, nur einen beantworten
-          return request;
+          _ledControl->standBy( false );
         }
-        else if ( p.key() == cmd_get_standby )
+        else
         {
-          //
-          // gib STANDBY Wert zurück
-          //
-          answer[ cmd_standby ] = _ledControl->isStandBy();
-          serializeJsonPretty( answer, content );
+          answer[ "error" ] = "wrong parameter";
+          serializeJson( answer, content );
+          Serial.println( "send answer: " + content );
           request->send( 200, "application/json", content );
-          // Ende Gelände, nur einen beantworten
           return request;
         }
-        else if ( p.key() == cmd_set_standby )
-        {
-          //
-          // setzt STANDBY Wert
-          //
-          String stbyVal( p.value().as< String >() );
-          // vergleiche
-          if ( stbyVal == cmd_true )
-          {
-            //
-            // SETZEN
-            //
-            _ledControl->standBy( true );
-          }
-          else if ( stbyVal == cmd_false )
-          {
-            //
-            // LÖSCHEN
-            //
-            _ledControl->standBy( false );
-          }
-          else
-          {
-            answer[ "error" ] = "wrong parameter";
-            serializeJson( answer, content );
-            Serial.println( "send answer: " + content );
-            request->send( 200, "application/json", content );
-            return request;
-          }
-          //
-          // Wenn was gemaccht wurde
-          //
-          answer[ cmd_standby ] = _ledControl->isStandBy();
-          serializeJsonPretty( answer, content );
-          request->send( 200, "application/json", content );
-          // Ende Gelände, nur einen beantworten
-          return request;
-        }
+        //
+        // Wenn was gemaccht wurde
+        //
+        answer[ cmd_standby ] = _ledControl->isStandBy();
+        serializeJsonPretty( answer, content );
+        request->send( 200, "application/json", content );
+        // Ende Gelände, nur einen beantworten
+        return request;
       }
     }
     /*
@@ -329,6 +464,9 @@ namespace APISrv
     answer[ cmd_standby ] = _ledControl->isStandBy();
     JsonObject ledValObj = answer.createNestedObject( cmd_rgbw );
     getLedValues( ledValObj );
+    answer[ cmd_pwm_resolution ] = _prefs->getPwmResolution();
+    answer[ cmd_pwm_frequence ] = _prefs->getPwmFreq();
+    answer[ cmd_pwm_is_inverse ] = _prefs->getIsLEDInvers();
     serializeJsonPretty( answer, content );
     request->send( 200, "application/json", content );
     return request;
@@ -354,6 +492,25 @@ namespace APISrv
 #endif
     id.toUpperCase();
     return id;
+  }
+
+  void ApiJSONServerClass::loop()
+  {
+    if ( restartRequired )
+    {
+      yield();
+      delay( 1000 );
+      yield();
+#if defined( ESP8266 )
+      ESP.restart();
+#elif defined( ESP32 )
+      // ESP32 will commit sucide
+      esp_task_wdt_init( 1, true );
+      esp_task_wdt_add( NULL );
+      while ( true )
+        ;
+#endif
+    }
   }
 
 }  // namespace APISrv

@@ -1,8 +1,8 @@
 #include "indexPage.hpp"
 #include "main.hpp"
 
-APISrv::ApiJSONServerClass ApiJSONServer;
-AsyncElegantOtaClass AsyncElegantOTA;
+AsyncElegantOtaClass AsyncElegantOTA;      // der OTA Server
+APISrv::ApiJSONServerClass ApiJSONServer;  //! mein REST Server
 
 /**
  * Initialisiere den NVM Speicher
@@ -60,6 +60,7 @@ void initWiFi( OTASrv::OTAPrefs &prefs )
 void initMDNS( OTASrv::OTAPrefs &prefs )
 {
   Serial.println( "start mDNS Service..." );
+  mdns_free();
   if ( ESP_OK == mdns_init() )
   {
     Serial.println( "start mDNS Service...OK" );
@@ -87,7 +88,7 @@ void initMDNS( OTASrv::OTAPrefs &prefs )
 /**
  * initialisiere den Webserver
  */
-AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &httpServer, LedControl::LedControlClass *ledControl )
+void initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &httpServer, LedControl::LedControlClass *ledControl )
 {
   //
   // der root zugriff
@@ -98,9 +99,6 @@ AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &h
     response->addHeader( "Content-Encoding", "gzip" );
     request->send( response );
   } );
-
-  // httpServer.on( "/", HTTP_GET, []( AsyncWebServerRequest *request ) { request->send( 200, "text/plain", "Hi! I am ESP32." ); } );
-
   //
   // OTA Server
   //
@@ -117,5 +115,4 @@ AsyncElegantOtaClass *initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &h
   Serial.println( "..." );
   httpServer.begin();
   Serial.println( "HTTP httpServer started" );
-  return ( &AsyncElegantOTA );
 }

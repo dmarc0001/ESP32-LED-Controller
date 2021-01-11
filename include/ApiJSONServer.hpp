@@ -30,6 +30,7 @@ namespace APISrv
     private:
     AsyncWebServer *_server;
     LedControl::LedControlClass *_ledControl;
+    OTASrv::OTAPrefs *_prefs;
     String _id = _getID();
     String _apiUserName = "";
     String _apiPassword = "";
@@ -44,12 +45,14 @@ namespace APISrv
     public:
     void setID( const char *id );
     String getID();
+    void loop();
 
     void begin( AsyncWebServer *server, OTASrv::OTAPrefs &prefs, LedControl::LedControlClass *ledControl = nullptr );
 
     private:
     String _getID();
     AsyncWebServerRequest *onLedCommandPost( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total );
+    AsyncWebServerRequest *onPwmCommandPost( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total );
 
     AsyncWebServerRequest *onGetIdentity( AsyncWebServerRequest *request );
     AsyncWebServerRequest *onGetValues( AsyncWebServerRequest *request );
@@ -70,8 +73,10 @@ namespace APISrv
     static const JsonString cmd_color_green;
     static const JsonString cmd_color_blue;
     static const JsonString cmd_color_white;
-    // static const char *cmd_true;
-    // static const char *cmd_false;
+    //
+    static const JsonString cmd_pwm_resolution;
+    static const JsonString cmd_pwm_frequence;
+    static const JsonString cmd_pwm_is_inverse;
   };  // namespace APISrv
 
 }  // namespace APISrv

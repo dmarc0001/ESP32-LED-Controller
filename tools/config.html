@@ -99,66 +99,6 @@
       width: 5em;
     }
 
-    /* switche */
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 65%;
-      min-width: 1em;
-      height: 3em;
-      margin-bottom: 1em;
-      margin-left: 1%;
-      margin-right: 1%;
-    }
-
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      -webkit-transition: .4s;
-      transition: .4s;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 2.3em;
-      width: 2em;
-      left: .5em;
-      bottom: .2em;
-      background-color: rgb(8, 50, 190);
-      -webkit-transition: .4s;
-      transition: .4s;
-    }
-
-
-    input:checked+.slider {
-      background-color: #3ca1ff;
-    }
-
-    input:hover+.slider {
-      box-shadow: 0 0 .4em #eb5959;
-    }
-
-    input:checked+.slider:before {
-      -webkit-transform: translateX(26px);
-      -ms-transform: translateX(26px);
-      transform: translateX(26px);
-    }
-
-    /* switch ende */
-
-
     /*kleine Displays*/
     @media all and (max-width: 75em) {
       body {
@@ -202,22 +142,6 @@
         margin-top: 1.2em;
         width: 98.5%;
       }
-
-      .switch {
-        width: 98%;
-        min-width: 1em;
-        height: 6em;
-        margin-top: .4em;
-        margin-bottom: 1em;
-        margin-left: 1%;
-        margin-right: 1%;
-      }
-
-      .slider:before {
-        height: 5.4em;
-        width: 6em;
-        left: 1em;
-      }
     }
 
     /* switche ende*/
@@ -235,23 +159,54 @@
       }, 500);
     }
 
+    function save_wlan() {
 
-    function setStandby(is_stb) {
-      var xhr = new XMLHttpRequest();
-      var url = '/rest/led';
-      var stb = 'true';
-      if (is_stb == false) {
-        stb = 'false';
+    }
+
+    function save_fw_access() {
+
+    }
+
+    function save_pwm_config() {
+      var pwm_res = null;
+      var pwm_freq = null;
+      var pwm_inv = null;
+      var elem = null;
+
+      var elem = document.getElementById('pwm_resolution');
+      if (elem) {
+        if (elem.value > 0) {
+          pwm_res = elem.value;
+        }
       }
+      elem = document.getElementById('pwm_freq');
+      if (elem) {
+        if (elem.value && elem.value >= 500 && elem.value <= 10000) {
+          pwm_freq = elem.value;
+        }
+      }
+      elem = document.getElementById('pwm_inverse');
+      if (elem) {
+        //pwm_inv = elem.value;
+        if (elem.value == "true" || elem.value == "false") {
+          pwm_inv = elem.value;
+        }
+      }
+      var xhr = new XMLHttpRequest();
+      var url = '/rest/pwm';
       xhr.open('POST', url, true);
       xhr.setRequestHeader('Content-Type', 'application/json');
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
           var json = JSON.parse(xhr.responseText);
-          console.log('standby:' + json.standby + ', error:' + json.error);
+          console.log('response from controller:');
+          console.log('pwm resolution: ' + json.pwm_res);
+          console.log('pwm frequence: ' + json.pwm_freq);
+          console.log('pwm invers: ' + json.pwm_inv);
+          console.log('status: ' + json.status);
         }
       };
-      var data = JSON.stringify({ 'set_standby': stb });
+      var data = JSON.stringify({ 'pwm_res': pwm_res, 'pwm_freq': pwm_freq, 'pwm_inv': pwm_inv });
       console.debug(data);
       xhr.send(data);
     }
@@ -287,7 +242,7 @@
     <span><label for="fw_access_password">Password:</label></span>
     <input type="password" id="fw_access_password" name="fw_access_password" value=""
       placeholder="Password for Access" />
-    <input type="button" value="[SAVE ACCESS]" onclick="save_update_access();">
+    <input type="button" value="[SAVE ACCESS]" onclick="save_fw_access();">
   </div>
 
 
@@ -296,23 +251,24 @@
 
     <span><label for="pwm_resolution">Resolution:</label></span>
     <select name="pwm_resolution" id="pwm_resolution" size="1">
-      <option>08 Bits</option>
-      <option>10 Bits</option>
-      <option>12 Bits</option>
-      <option>15 Bits</option>
+      <option value="0">--- do not set ---</option>
+      <option value="8">08 Bits</option>
+      <option value="10">10 Bits</option>
+      <option value="12">12 Bits</option>
+      <option value="15">15 Bits</option>
     </select>
 
-    <br />
     <span><label for="pwm_freq">Frequence:</label></span>
-    <input type="number" id="pwm_freq" name="pwm_freq" value="5000" placeholder="Freq (Hz)" />
+    <input type="number" id="pwm_freq" name="pwm_freq" value="" placeholder="set Freq (Hz)" />
 
-    <span><label for="pwm_invers">Invers PWM:</label></span>
-    <label class="switch">
-      <input type="checkbox" id="led_standby_checkbox" checked>
-      <span class="slider"></span>
-    </label>
+    <span><label for="pwm_inverse">Inverse PWM:</label></span>
+    <select name="pwm_inverse" id="pwm_inverse" size="1">
+      <option value="">--- do not set ---</option>
+      <option value="true">inverse PWM signal</option>
+      <option value="false">not inverse PWM signal</option>
+    </select>
 
-    <input type="button" value="[SAVE PWM]" onclick="save_pwm_values();">
+    <input type="button" value="[SAVE PWM]" onclick="save_pwm_config();">
 
   </div>
 

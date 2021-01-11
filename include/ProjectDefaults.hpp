@@ -9,7 +9,8 @@ namespace OTASrv
   //
   // Seriennummer des Programmes
   //
-  constexpr char serialStr[] = "20210106-0002";
+  // constexpr char serialStr[] = "20210111-0007";
+  // extern const char *serialStr;
   //
   // für RGB LED mit gemeinsamer Anode
   //
@@ -68,6 +69,9 @@ namespace OTASrv
   constexpr uint8_t PWM_LED_CHANNEL_BLUE = 2;   //! Channel blaue LED
   constexpr uint8_t PWM_LED_WHITE = 33;         //! Weiße LED
   constexpr uint8_t PWM_LED_CHANNEL_WHITE = 3;  //! Channel weiße LED
+  constexpr double PWM_MIN_FREQENCE = 400.0;    //! minimale erlaubtre Frequenz
+  constexpr double PWM_MAX_FREQENCE = 50000.0;  //! maximale erlaubtre Frequenz
+
   //
   // LED Ausgang GPIO für WLAN CONNECT
   //
@@ -93,5 +97,9 @@ namespace OTASrv
   constexpr char CMD_COLOR_WHITE[] = "white";
   constexpr char CMD_TRUE[] = "true";
   constexpr char CMD_FALSE[] = "false";
+
+  constexpr char CMD_PWM_RESOLUTION[] = "pwm_res";
+  constexpr char CMD_PWM_FREQUENCE[] = "pwm_freq";
+  constexpr char CMD_PWM_INVERSE[] = "pwm_inv";
 
 }  // namespace OTASrv

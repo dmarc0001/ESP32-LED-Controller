@@ -3,7 +3,6 @@
 OTASrv::OTAPrefs prefs;                  //! Preferenzen
 AsyncWebServer httpServer( 80 );         //! der eigentliche Webserver Prozess
 LedControl::LedControlClass ledControl;  //! Objekt zur Kontrolle der LED
-AsyncElegantOtaClass *otaServer;         //! Zeiger auf den OTA Serverprozess für loop()
 LedControl::LedStatusClass ledPrefs;     //! aktuelle Preferenzwerte für LED (in Prozenzen)
 
 void setup( void )
@@ -24,7 +23,7 @@ void setup( void )
   ledControl.standBy( false );
   ledControl.setPercentStatus( ledPrefs );
   initWiFi( prefs );
-  otaServer = initHttpServer( prefs, httpServer, &ledControl );
+  initHttpServer( prefs, httpServer, &ledControl );
 }
 
 void loop( void )
@@ -126,5 +125,6 @@ void loop( void )
   //
   // warten auf neustart nach Flash
   //
-  otaServer->loop();
+  AsyncElegantOTA.loop();
+  ApiJSONServer.loop();
 }
