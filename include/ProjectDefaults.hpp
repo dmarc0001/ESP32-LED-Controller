@@ -102,4 +102,10 @@ namespace OTASrv
   constexpr char CMD_PWM_FREQUENCE[] = "pwm_freq";
   constexpr char CMD_PWM_INVERSE[] = "pwm_inv";
 
+  constexpr char CMD_FW_USERID[] = "access_id";
+  constexpr char CMD_FW_PASSWD[] = "access_pw";
+
+  constexpr char CMD_API_USERID[] = "api_id";
+  constexpr char CMD_API_PASSWD[] = "api_pw";
+
 }  // namespace OTASrv

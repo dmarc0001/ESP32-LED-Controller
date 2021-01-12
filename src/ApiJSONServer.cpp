@@ -23,6 +23,12 @@ namespace APISrv
   const JsonString ApiJSONServerClass::cmd_pwm_frequence{ OTASrv::CMD_PWM_FREQUENCE };
   const JsonString ApiJSONServerClass::cmd_pwm_is_inverse{ OTASrv::CMD_PWM_INVERSE };
   //
+  const JsonString ApiJSONServerClass::cmd_fw_userid{ OTASrv::CMD_FW_USERID };
+  const JsonString ApiJSONServerClass::cmd_fw_passwd{ OTASrv::CMD_FW_PASSWD };
+  //
+  const JsonString ApiJSONServerClass::cmd_api_userid{ OTASrv::CMD_API_USERID };
+  const JsonString ApiJSONServerClass::cmd_api_passwd{ OTASrv::CMD_API_PASSWD };
+
   //
   void ApiJSONServerClass::begin( AsyncWebServer *server, OTASrv::OTAPrefs &prefs, LedControl::LedControlClass *ledControl )
   {
@@ -86,6 +92,26 @@ namespace APISrv
           return ( onPwmCommandPost( request, data, len, index, total ) );
         } );
 
+    _server->on(
+        "/rest/fw_access", HTTP_POST,
+        []( AsyncWebServerRequest *request ) {
+          // nothing and dont remove it
+        },
+        NULL,
+        [ this ]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
+          return ( onFwAccountCommandPost( request, data, len, index, total ) );
+        } );
+
+    _server->on(
+        "/rest/api_access", HTTP_POST,
+        []( AsyncWebServerRequest *request ) {
+          // nothing and dont remove it
+        },
+        NULL,
+        [ this ]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
+          return ( onFwAccountCommandPost( request, data, len, index, total ) );
+        } );
+
     //
     // LED Statusabfrage
     //
@@ -103,6 +129,81 @@ namespace APISrv
           return ( onLedCommandPost( request, data, len, index, total ) );
         } );
   }
+
+  AsyncWebServerRequest *ApiJSONServerClass::onFwAccountCommandPost( AsyncWebServerRequest *request,
+                                                                     uint8_t *data,
+                                                                     size_t len,
+                                                                     size_t index,
+                                                                     size_t total )
+  {
+    DynamicJsonDocument doc( 1024 );
+    DynamicJsonDocument answerDoc( 1024 );
+    JsonObject answer = answerDoc.to< JsonObject >();
+    DeserializationError err = deserializeJson( doc, ( const char * ) data );
+    String content;
+    if ( err )
+    {
+      // das ging schief
+      answer[ "error" ] = err.c_str();
+      serializeJson( doc, content );
+      Serial.println( content );
+      request->send( 404, "application/json", content );
+      return request;
+    }
+    String result;
+    JsonObject jobj = doc.as< JsonObject >();
+    String updateUserId;
+    String updateUserPw;
+    if ( jobj.containsKey( cmd_fw_userid ) )
+    {
+      updateUserId = jobj[ cmd_fw_userid ].as< String >();
+      if ( 0 != updateUserId.compareTo( "null" ) )
+      {
+        Serial.print( "cmd fw account <" );
+        Serial.print( cmd_fw_userid.c_str() );
+        Serial.print( "> : <" );
+        Serial.print( updateUserId );
+        Serial.println( ">" );
+      }
+    }
+    if ( jobj.containsKey( cmd_fw_passwd ) )
+    {
+      updateUserPw = jobj[ cmd_fw_passwd ].as< String >();
+      if ( 0 != updateUserPw.compareTo( "null" ) )
+      {
+        Serial.print( "cmd fw account <" );
+        Serial.print( cmd_fw_passwd.c_str() );
+        Serial.print( "> : <" );
+        Serial.print( updateUserPw );
+        Serial.println( ">" );
+      }
+    }
+    if ( !( updateUserId.isEmpty() || updateUserPw.isEmpty() ) )
+    {
+      _prefs->setUpdateUser( updateUserId );
+      answer[ cmd_fw_userid ] = "OK";
+      _prefs->setUpdatePassword( updateUserPw );
+      answer[ cmd_fw_passwd ] = "OK";
+      _configAuthRequired = true;
+      _configUserName = updateUserId.c_str();
+      _configPassword = updateUserPw.c_str();
+      Serial.println( "new firmware account setting success." );
+    }
+
+    //
+    // Generelle Rückantwort
+    //
+    if ( !answer.containsKey( "status" ) )
+    {
+      answer[ "status" ] = "OK";
+    }
+    // serializeJson( answer, content );
+    serializeJsonPretty( answer, content );
+    request->send( 200, "application/json", content );
+    // Ende Gelände, nur einen beantworten
+    return request;
+  }
+
   AsyncWebServerRequest *ApiJSONServerClass::onPwmCommandPost( AsyncWebServerRequest *request,
                                                                uint8_t *data,
                                                                size_t len,

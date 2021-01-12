@@ -11,6 +11,7 @@ namespace LedControl
 
 namespace OTASrv
 {
+  // TODO: set String values begrenzen
   class OTAPrefs : public Preferences
   {
     private:
@@ -28,7 +29,9 @@ namespace OTASrv
     String getApiUser();
     String getApiPassword();
     String getUpdateUser();
+    void setUpdateUser( String );
     String getUpdatePassword();
+    void setUpdatePassword( String );
     bool getIsLEDInvers();
     void setIsLEDInvers( bool is_invers );
     uint8_t getPwmResolution();

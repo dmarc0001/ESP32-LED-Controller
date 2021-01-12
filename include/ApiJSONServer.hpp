@@ -53,7 +53,11 @@ namespace APISrv
     String _getID();
     AsyncWebServerRequest *onLedCommandPost( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total );
     AsyncWebServerRequest *onPwmCommandPost( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total );
-
+    AsyncWebServerRequest *onFwAccountCommandPost( AsyncWebServerRequest *request,
+                                                   uint8_t *data,
+                                                   size_t len,
+                                                   size_t index,
+                                                   size_t total );
     AsyncWebServerRequest *onGetIdentity( AsyncWebServerRequest *request );
     AsyncWebServerRequest *onGetValues( AsyncWebServerRequest *request );
 
@@ -77,6 +81,12 @@ namespace APISrv
     static const JsonString cmd_pwm_resolution;
     static const JsonString cmd_pwm_frequence;
     static const JsonString cmd_pwm_is_inverse;
+    //
+    static const JsonString cmd_fw_userid;
+    static const JsonString cmd_fw_passwd;
+    //
+    static const JsonString cmd_api_userid;
+    static const JsonString cmd_api_passwd;
   };  // namespace APISrv
 
 }  // namespace APISrv

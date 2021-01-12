@@ -163,23 +163,140 @@
 
     }
 
+    function save_api_access() {
+      var access_uid = null;
+      var access_password = null;
+      var access_password2 = null;
+      var send_data = false;
+
+      console.debug("save_api_access()...");
+      var elem = document.getElementById('api_access_uid');
+      if (elem) {
+        access_uid = elem.value;
+        console.debug("API access user id exist: " + access_uid + ' len: ' + access_uid.length);
+      }
+      var elem = document.getElementById('api_access_password');
+      if (elem) {
+        access_password = elem.value;
+        console.debug("API access password exist, len: " + access_password.length);
+      }
+      var elem = document.getElementById('api_access_password2');
+      if (elem) {
+        access_password2 = elem.value;
+        console.debug("API access repeated password exist, len: " + access_password2.length);
+      }
+      if (access_uid == null || access_password == null || access_password2 == null) {
+        console.error("JavaScript: can\'t find one of the needet HTML elements.");
+        return;
+      }
+      //
+      if (access_uid.length == 0) {
+        console.debug("empty uid accepted.");
+        access_uid = 'null';
+        send_data = true;
+      }
+      else {
+        if (access_uid.length > 4) {
+          console.debug("userid <" + access_uid + "> aceppted.");
+          send_data = true;
+        }
+        else {
+          conole.error("userid too short (min 4 characters)");
+          send_data = false;
+        }
+      }
+      if (send_data && access_password.length == 0 && access_password2.length == 0) {
+        console.debug("empty password accepted.");
+        access_password = 'null';
+      }
+      else if (send_data && access_password.length > 5 && access_password2.length > 5) {
+        if (access_password === access_password2) {
+          console.debug("passwords are equal, password accepted.")
+        }
+        else {
+          console.error("passwords are not equal.");
+          send_data = false;
+        }
+      }
+      else {
+        console.error("password to short or not repeated.");
+        send_data = false;
+      }
+      if (send_data === true) {
+        // Send request
+        var xhr = new XMLHttpRequest();
+        var url = '/rest/api_access';
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            console.log('response from controller:');
+            console.log('set account: ' + json.api_id);
+            console.log('set passwd: ' + json.api_pw);
+            console.log('status: ' + json.status);
+          }
+        };
+        var data = JSON.stringify({ 'api_id': access_uid, 'api_pw': access_password });
+        console.debug(data);
+        xhr.send(data);
+      }
+      else {
+        console.error("not send to controller because an error.");
+      }
+    }
+
     function save_fw_access() {
       var access_uid = null;
       var access_password = null;
+      var access_password2 = null;
 
+      console.debug("save_fw_access()...");
       var elem = document.getElementById('fw_access_uid');
       if (elem) {
-        if (elem.value > 0) {
-          access_uid = elem.value;
-        }
+        access_uid = elem.value;
+        console.debug("Firmware access user id exist: " + access_uid + ' len: ' + access_uid.length);
       }
       var elem = document.getElementById('fw_access_password');
       if (elem) {
-        if (elem.value > 0) {
-          access_uid = elem.value;
+        access_password = elem.value;
+        console.debug("Firmware access password exist, len: " + access_password.length);
+      }
+      var elem = document.getElementById('fw_access_password2');
+      if (elem) {
+        access_password2 = elem.value;
+        console.debug("Firmware access repeated password exist, len: " + access_password2.length);
+      }
+      if (access_uid == null || access_password == null || access_password2 == null) {
+        console.error("JavaScript: can\'t find one of the needet HTML elements.");
+        return;
+      }
+      //
+      if (access_uid.length > 4) {
+        console.debug("access_uid aceppted.");
+        if (access_password.length > 5 && access_password2.length > 5) {
+          if (access_password === access_password2) {
+            console.debug("Firmware access password and repeated password are equal. accepted");
+            // Send request
+            var xhr = new XMLHttpRequest();
+            var url = '/rest/fw_access';
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState === 4 && xhr.status === 200) {
+                var json = JSON.parse(xhr.responseText);
+                console.log('response from controller:');
+                console.log('set account: ' + json.access_id);
+                console.log('set passwd: ' + json.access_pw);
+                console.log('status: ' + json.status);
+              }
+            };
+            var data = JSON.stringify({ 'access_id': access_uid, 'access_pw': access_password });
+            console.debug(data);
+            xhr.send(data);
+          }
         }
       }
-
     }
 
     function save_pwm_config() {
@@ -188,6 +305,7 @@
       var pwm_inv = null;
       var elem = null;
 
+      console.debug("save_pwm_config()...");
       var elem = document.getElementById('pwm_resolution');
       if (elem) {
         if (elem.value > 0) {
@@ -248,6 +366,22 @@
     <input type="button" value="[SAVE WLAN]" onclick="save_wlan();">
   </div>
 
+  <div class="bundle" id="api_acces_form">
+    <h2>API Access <i>-maybe empty-</i></h2>
+
+    <span><label for="api_access_uid">Username:</label></span>
+    <input type="input" id="api_access_uid" name="api_access_uid" value="" placeholder="Username for Access" />
+
+    <span><label for="api_access_password">Password:</label></span>
+    <input type="password" id="api_access_password" name="api_access_password" value=""
+      placeholder="Password for Access" />
+
+    <span><label for="api_access_password2">Password repeat:</label></span>
+    <input type="password" id="api_access_password2" name="api_access_password2" value=""
+      placeholder="Repeated Password for Access" />
+    <input type="button" value="[SAVE ACCESS]" onclick="save_api_access();">
+  </div>
+
   <div class="bundle" id="update_acces_form">
     <h2>Firmware Config Access</h2>
 
@@ -257,9 +391,12 @@
     <span><label for="fw_access_password">Password:</label></span>
     <input type="password" id="fw_access_password" name="fw_access_password" value=""
       placeholder="Password for Access" />
+
+    <span><label for="fw_access_password2">Password repeat:</label></span>
+    <input type="password" id="fw_access_password2" name="fw_access_password2" value=""
+      placeholder="Repeated Password for Access" />
     <input type="button" value="[SAVE ACCESS]" onclick="save_fw_access();">
   </div>
-
 
   <div class="bundle">
     <h2>Hardware PWM Properties</h2>
@@ -286,13 +423,7 @@
     <input type="button" value="[SAVE PWM]" onclick="save_pwm_config();">
 
   </div>
-
-
   <div style="margin-top: 5em;"></div>
-
-
-
-
 </body>
 
 </html>

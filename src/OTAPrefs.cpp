@@ -2,7 +2,7 @@
 
 namespace OTASrv
 {
-  const char *OTAPrefs::serialStr = "20210111-204147-build-0076";
+  const char *OTAPrefs::serialStr = "20210112-181940-build-0097";
 
   OTAPrefs::OTAPrefs() : Preferences()
   {
@@ -67,9 +67,19 @@ namespace OTASrv
     return ( getString( updateUserKey ) );
   }
 
+  void OTAPrefs::setUpdateUser( String userid )
+  {
+    putString( updateUserKey, userid );
+  }
+
   String OTAPrefs::getUpdatePassword()
   {
     return ( getString( updatePasswordKey ) );
+  }
+
+  void OTAPrefs::setUpdatePassword( String passwd )
+  {
+    putString( updatePasswordKey, passwd );
   }
 
   bool OTAPrefs::getIsLEDInvers()
