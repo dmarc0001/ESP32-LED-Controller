@@ -173,8 +173,11 @@
     var lastChange = 10;
     var busyLock = 10;
     var busyLockStart = 30;
+    var colorReload = 0;
+    var currentColor = 0;
 
     function init_page() {
+      getColorFromController();
       var elem = document.getElementById('led_standby_checkbox');
       if (elem) {
         elem.onclick = function () { setStandby(!this.checked) };
@@ -187,8 +190,51 @@
       setInterval(function () {
         if (lastChange > 0) { lastChange-- };
         if (busyLock > 0) { busyLock-- };
+        colorReload += 1;
+        if (busyLock <= 0 && (colorReload % 8 > 0)) {
+          getColorFromController();
+        }
+
       }, 500);
     }
+
+    function varToHex(rgb) {
+      var hex = Number(rgb).toString(16);
+      if (hex.length < 2) {
+        hex = "0" + hex;
+      }
+      return hex;
+    }
+
+    function getColorFromController() {
+      elem = document.getElementById("color_picker");
+      if (elem) {
+        busyLock = busyLockStart;
+        var xhr = new XMLHttpRequest();
+        var url = '/rest/led';
+        xhr.open('GET', url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            if (json.rgbw) {
+              red_val = Math.round((parseFloat(json.rgbw.red) * 255.0) / 100.0);
+              green_val = Math.round((parseFloat(json.rgbw.green) * 255.0) / 100.0);
+              blue_val = Math.round((parseFloat(json.rgbw.blue) * 255.0) / 100.0);
+              colorValue = "#" + varToHex(red_val) + varToHex(green_val) + varToHex(blue_val);
+              if (currentColor != colorValue) {
+                currentColor = colorValue;
+                elem.value = colorValue;
+                console.log("recived color: <" + colorValue + ">")
+              }
+            }
+            busyLock = 0;
+          }
+        };
+        xhr.send();
+      }
+    }
+
 
     function colorChange(elem) {
       console.debug("color entry change");
@@ -209,136 +255,14 @@
       lastChange = 1;
       /*hex string to int*/
       var rgbColor = parseInt(theColor.substring(1), 16);
-      /* convert int to rgbw */
-      var hsv = rgb2hsv(rgbColor);
-      var rgbw = hsv2rgbw(hsv);
-      /*values store in percent*/
-      red_val = (rgbw[0] * 100.0) / 255.0;
-      green_val = (rgbw[1] * 100.0) / 255.0;
-      blue_val = (rgbw[2] * 100.0) / 255.0;
-      white_val = (rgbw[3] * 100.0) / 255.0;
-      /* set in percent to MC */
+      // change to rgb signle values */
+      red_val = (((rgbColor & 0xff0000) >> 16) * 100.0) / 255.0;
+      green_val = (((rgbColor & 0x00ff00) >> 8) * 100.0) / 255.0;
+      blue_val = ((rgbColor & 0x0000ff) * 100.0) / 255.0;
+      white_val = Math.min(red_val, green_val, blue_val);
       console.debug("rgbw color: " + red_val.toFixed(2) + ", " + green_val.toFixed(2) + ", " + blue_val.toFixed(2) + ", " + white_val.toFixed(2));
       set_rgbw(red_val.toFixed(2), green_val.toFixed(2), blue_val.toFixed(2), white_val.toFixed(2))
     }
-
-    function rgb2hsv(rgb) {
-
-      let R, G, B, H, S, V;
-
-      R = (rgb >> 16) & 0xFF;
-      G = (rgb >> 8) & 0xFF;
-      B = rgb & 0xFF;
-
-      const M = Math.max(R, G, B);
-      const m = Math.min(R, G, B);
-
-      V = M / 255; //range to [0, 1]
-      S = M === 0 ? 0 : (1 - m / M);
-
-      const num = R - 0.5 * G - 0.5 * B;
-      const den = Math.sqrt(Math.pow(R, 2) + Math.pow(G, 2) + Math.pow(B, 2) - R * G - R * B - G * B);
-      let div;
-      if (den === 0) {
-        div = 0;
-      } else {
-        div = num / den;
-      }
-      const count = Math.acos(div) / Math.PI * 180;
-      if (G >= B) {
-        H = count;
-      } else {
-        H = 360 - count;
-      }
-
-      return [H, S, V]
-    };
-
-    function hsv2rgb(hsv) {
-
-      let R, G, B;
-
-      let H = hsv[0];
-      let S = hsv[1];
-      let V = hsv[2];
-
-      if (H === 0) {
-        R = V + 2 * V * S;
-        G = V - V * S;
-        B = V - V * S;
-      } else if (0 < H < 120) {
-        R = V + V * S * Math.cos(H) / Math.cos(60 - H);
-        G = V + V * S * (1 - Math.cos(H) / Math.cos(60 - H));
-        B = V - V * S;
-      } else if (H === 120) {
-        R = V - V * S;
-        G = V + 2 * V * S;
-        B = V - V * S;
-      } else if (120 < H < 240) {
-        R = V - V * S;
-        G = V + V * S * Math.cos(H - 120) / Math.cos(180 - H);
-        B = V + V * S * (1 - Math.cos(H - 120) / Math.cos(180 - H));
-      } else if (H === 240) {
-        R = V - V * S;
-        G = V - V * S;
-        B = V + 2 * V * S;
-      } else {
-        R = V + V * S * (1 - Math.cos(H - 240) / Math.cos(300 - H));
-        G = V - V * S;
-        B = V + V * S * Math.cos(H - 240) / Math.cos(300 - H);
-      }
-
-      return [R, G, B]
-    };
-
-    function hsv2rgbw(hsv) {
-      let r, g, b, w;
-      let cos_h, cos_1047_h;
-
-      let H = hsv[0];
-      let S = hsv[1];
-      let V = hsv[2];
-
-      H = 3.14159 * H / 180; // Convert to radians.
-      S = S > 0 ? (S < 1 ? S : 1) : 0; // clamp S and I to interval [0,1]
-      V = V > 0 ? (V < 1 ? V : 1) : 0;
-
-      if (H < 2.09439) {
-        cos_h = Math.cos(H);
-        cos_1047_h = Math.cos(1.047196667 - H);
-        r = S * 255 * V / 3 * (1 + cos_h / cos_1047_h);
-        g = S * 255 * V / 3 * (1 + (1 - cos_h / cos_1047_h));
-        b = 0;
-        w = 255 * (1 - S) * V;
-      } else if (H < 4.188787) {
-        H = H - 2.09439;
-        cos_h = Math.cos(H);
-        cos_1047_h = Math.cos(1.047196667 - H);
-        g = S * 255 * V / 3 * (1 + cos_h / cos_1047_h);
-        b = S * 255 * V / 3 * (1 + (1 - cos_h / cos_1047_h));
-        r = 0;
-        w = 255 * (1 - S) * V;
-      } else {
-        H = H - 4.188787;
-        cos_h = Math.cos(H);
-        cos_1047_h = Math.cos(1.047196667 - H);
-        b = S * 255 * V / 3 * (1 + cos_h / cos_1047_h);
-        r = S * 255 * V / 3 * (1 + (1 - cos_h / cos_1047_h));
-        g = 0;
-        w = 255 * (1 - S) * V;
-      }
-
-      return [r, g, b, w]
-    };
-
-    function toNum(arr) {
-      let length = arr.length;
-      let result = 0;
-      arr.forEach((item, index) => {
-        result += Math.round(item) * Math.pow(2, (length - 1 - index) * 8);
-      });
-      return result;
-    };
 
     function setStandby(is_stb) {
       var xhr = new XMLHttpRequest();
@@ -352,7 +276,7 @@
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
           var json = JSON.parse(xhr.responseText);
-          console.log('standby:' + json.standby + ', error:' + json.error);
+          console.debug('standby:' + json.standby + ', error:' + json.error);
         }
       };
       var data = JSON.stringify({ 'set_standby': stb });
@@ -362,7 +286,6 @@
 
     function set_rgbw(r, g, b, w) {
       busyLock = busyLockStart;
-
       var xhr = new XMLHttpRequest();
       var url = '/rest/led';
       xhr.open('POST', url, true);
@@ -370,7 +293,7 @@
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
           var json = JSON.parse(xhr.responseText);
-          console.log('response from controller:' + json.set_rgbw);
+          console.debug('response from controller:' + json.set_rgbw);
           busyLock = 0;
         }
       };
