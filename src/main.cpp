@@ -93,6 +93,9 @@ void loop( void )
       if ( timeDelta >= OTASrv::timeToResetWiFi )
       {
         Serial.println( "\rWiFi reconnecting...               " );
+        Serial.print( "Reconnect to: <" );
+        Serial.print( prefs.getSSID() );
+        Serial.println( ">..." );
         WiFi.reconnect();
         delay( 300 );
         lastTimer = millis();

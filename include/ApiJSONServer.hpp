@@ -58,6 +58,16 @@ namespace APISrv
                                                    size_t len,
                                                    size_t index,
                                                    size_t total );
+    AsyncWebServerRequest *onApiAccountCommandPost( AsyncWebServerRequest *request,
+                                                    uint8_t *data,
+                                                    size_t len,
+                                                    size_t index,
+                                                    size_t total );
+    AsyncWebServerRequest *onWlanSettingCommandPost( AsyncWebServerRequest *request,
+                                                     uint8_t *data,
+                                                     size_t len,
+                                                     size_t index,
+                                                     size_t total );
     AsyncWebServerRequest *onGetIdentity( AsyncWebServerRequest *request );
     AsyncWebServerRequest *onGetValues( AsyncWebServerRequest *request );
 
@@ -87,6 +97,11 @@ namespace APISrv
     //
     static const JsonString cmd_api_userid;
     static const JsonString cmd_api_passwd;
+    //
+    static const JsonString cmd_wlan_ssid;
+    static const JsonString cmd_wlan_passwd;
+    static const JsonString cmd_wlan_mdns;
+
   };  // namespace APISrv
 
 }  // namespace APISrv

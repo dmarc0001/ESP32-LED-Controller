@@ -23,11 +23,16 @@ namespace OTASrv
 
     bool begin( bool readOnly = false );
     String getSSID();
+    void setSSID( String );
     String getPassword();
+    void setPassword( String );
     String getSerialStr();
     String getHostname();
+    void setHostname( String );
     String getApiUser();
+    void setApiUser( String );
     String getApiPassword();
+    void setApiPassword( String );
     String getUpdateUser();
     void setUpdateUser( String );
     String getUpdatePassword();

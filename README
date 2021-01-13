@@ -10,3 +10,4 @@
 /rest/pwm           POST -> REST set PWM Settings
 /rest/fw_access     POST -> REST set Firmware access informations
 /rest/api_access    POST -> REST set api access informations
+/rest/wlan_access   POST -> REAT set WLAN SSID,PASSWD,mDNS Hostname

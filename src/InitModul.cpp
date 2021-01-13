@@ -50,6 +50,8 @@ void initWiFi( OTASrv::OTAPrefs &prefs )
   WiFi.mode( WIFI_STA );
   Serial.print( "Connecting to <" );
   Serial.print( prefs.getSSID() );
+  Serial.print( "> Secret: <" );
+  Serial.print( prefs.getPassword() );
   Serial.println( ">..." );
   WiFi.begin( prefs.getSSID().c_str(), prefs.getPassword().c_str() );
 }

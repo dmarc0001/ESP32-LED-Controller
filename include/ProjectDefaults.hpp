@@ -7,11 +7,6 @@ namespace OTASrv
    * Konstanten für das Programm +
    ***************************************************************************/
   //
-  // Seriennummer des Programmes
-  //
-  // constexpr char serialStr[] = "20210111-0007";
-  // extern const char *serialStr;
-  //
   // für RGB LED mit gemeinsamer Anode
   //
   constexpr bool rgbInverted = true;
@@ -44,7 +39,7 @@ namespace OTASrv
   constexpr char wasInitKey[] = "wasInit";                //! wurde schon initialisiert?
   constexpr char prefsVersionKey[] = "prefsVersion";      //! welche Version der Einstellungen?
   constexpr char SSIDKey[] = "SSID";                      //! an welchem WLAN anmelden (konfigurierbar)?
-  constexpr char passwordKey[] = "password";              //! welches PW im WLAN (konfigurierbar)
+  constexpr char wlanPasswordKey[] = "wlanPw";            //! welches PW im WLAN (konfigurierbar)
   constexpr char hostnameKey[] = "hostname";              //! welcher Hostname für das nDNS (konfigurierbar)
   constexpr char apiUserKey[] = "apiUser";                //! api user name (konfigurierbar, default null)
   constexpr char apiPasswordKey[] = "apiPassword";        //! api passwort (konfigurierbar, default null)
@@ -107,5 +102,9 @@ namespace OTASrv
 
   constexpr char CMD_API_USERID[] = "api_id";
   constexpr char CMD_API_PASSWD[] = "api_pw";
+
+  constexpr char CMD_WLAN_SSID[] = "wlan_ssid";
+  constexpr char CMD_WLAN_PASSWD[] = "wlan_pw";
+  constexpr char CMD_WLAN_MDNSHOST[] = "mdns_host";
 
 }  // namespace OTASrv

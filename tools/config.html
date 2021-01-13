@@ -160,7 +160,67 @@
     }
 
     function save_wlan() {
+      var ssid = null;
+      var ssid_passwd = null;
+      var mdns_host = null;
+      var send_val = 2;
 
+      console.debug("save_wlan()...");
+      var elem = document.getElementById('wlan_access_ssid');
+      if (elem) {
+        ssid = elem.value;
+        console.debug("WLAN SSID: " + ssid + ' len: ' + ssid.length);
+      }
+      var elem = document.getElementById('wlan_access_passwd');
+      if (elem) {
+        ssid_passwd = elem.value;
+        console.debug("WLAN PASSWORD: " + ssid_passwd + ' len: ' + ssid_passwd.length);
+      }
+      var elem = document.getElementById('wlan_ndns_hostname');
+      if (elem) {
+        mdns_host = elem.value;
+        console.debug("WLAN mDNS Hostname: " + mdns_host + ' len: ' + mdns_host.length);
+      }
+      if (ssid == null || ssid_passwd == null || mdns_host == null) {
+        console.error();
+        console.error("JavaScript: can\'t find one of the needet HTML elements.");
+        return;
+      }
+      // auswerten
+      if (ssid.length < 4 || ssid_passwd.length < 4) {
+        ssid = "null";
+        ssid_passwd = "null";
+        send_val = send_val - 1;
+        console.debug("ssid and pw not to send...");
+      }
+      if (mdns_host.length < 4) {
+        mdns_host = "null";
+        send_val = send_val - 1;
+      }
+      // lohnt das Senden?
+      if (send_val > 0) {
+        // Send request
+        var xhr = new XMLHttpRequest();
+        var url = '/rest/wlan_access';
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var json = JSON.parse(xhr.responseText);
+            console.log('response from controller:');
+            console.log('set ssid: ' + json.wlan_ssid);
+            console.log('set passwd: ' + json.wlan_pw);
+            console.log('set mdns host: ' + json.mdns_host);
+            console.log('status: ' + json.status);
+          }
+        };
+        var data = JSON.stringify({ 'wlan_ssid': ssid, 'wlan_pw': ssid_passwd, 'mdns_host': mdns_host });
+        console.debug(data);
+        xhr.send(data);
+      }
+      else {
+        console.log("not send to controller because no data valid.");
+      }
     }
 
     function save_api_access() {
@@ -379,6 +439,9 @@
     <span><label for="api_access_password2">Password repeat:</label></span>
     <input type="password" id="api_access_password2" name="api_access_password2" value=""
       placeholder="Repeated Password for Access" />
+    <p><i>If you let fields empty and click SAVE ACCESS it will be able access without user/password. It is the default
+        behavior.</i></p>
+    </p>
     <input type="button" value="[SAVE ACCESS]" onclick="save_api_access();">
   </div>
 
