@@ -30,10 +30,14 @@ namespace APISrv
     private:
     AsyncWebServer *_server;
     LedControl::LedControlClass *_ledControl;
+    OTASrv::OTAPrefs *_prefs;
     String _id = _getID();
-    String _username = "";
-    String _password = "";
-    bool _authRequired = false;
+    String _apiUserName = "";
+    String _apiPassword = "";
+    bool _apiAuthRequired = false;
+    String _configUserName = "";
+    String _configPassword = "";
+    bool _configAuthRequired = false;
     bool restartRequired = false;
     String cmd_true{ OTASrv::CMD_TRUE };
     String cmd_false{ OTASrv::CMD_FALSE };
@@ -41,16 +45,29 @@ namespace APISrv
     public:
     void setID( const char *id );
     String getID();
+    void loop();
 
-    void begin( AsyncWebServer *server,
-                const char *username = "",
-                const char *password = "",
-                LedControl::LedControlClass *ledControl = nullptr );
+    void begin( AsyncWebServer *server, OTASrv::OTAPrefs &prefs, LedControl::LedControlClass *ledControl = nullptr );
 
     private:
     String _getID();
     AsyncWebServerRequest *onLedCommandPost( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total );
-
+    AsyncWebServerRequest *onPwmCommandPost( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total );
+    AsyncWebServerRequest *onFwAccountCommandPost( AsyncWebServerRequest *request,
+                                                   uint8_t *data,
+                                                   size_t len,
+                                                   size_t index,
+                                                   size_t total );
+    AsyncWebServerRequest *onApiAccountCommandPost( AsyncWebServerRequest *request,
+                                                    uint8_t *data,
+                                                    size_t len,
+                                                    size_t index,
+                                                    size_t total );
+    AsyncWebServerRequest *onWlanSettingCommandPost( AsyncWebServerRequest *request,
+                                                     uint8_t *data,
+                                                     size_t len,
+                                                     size_t index,
+                                                     size_t total );
     AsyncWebServerRequest *onGetIdentity( AsyncWebServerRequest *request );
     AsyncWebServerRequest *onGetValues( AsyncWebServerRequest *request );
 
@@ -70,8 +87,21 @@ namespace APISrv
     static const JsonString cmd_color_green;
     static const JsonString cmd_color_blue;
     static const JsonString cmd_color_white;
-    // static const char *cmd_true;
-    // static const char *cmd_false;
+    //
+    static const JsonString cmd_pwm_resolution;
+    static const JsonString cmd_pwm_frequence;
+    static const JsonString cmd_pwm_is_inverse;
+    //
+    static const JsonString cmd_fw_userid;
+    static const JsonString cmd_fw_passwd;
+    //
+    static const JsonString cmd_api_userid;
+    static const JsonString cmd_api_passwd;
+    //
+    static const JsonString cmd_wlan_ssid;
+    static const JsonString cmd_wlan_passwd;
+    static const JsonString cmd_wlan_mdns;
+
   };  // namespace APISrv
 
 }  // namespace APISrv

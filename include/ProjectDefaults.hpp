@@ -7,17 +7,13 @@ namespace OTASrv
    * Konstanten für das Programm +
    ***************************************************************************/
   //
-  // Seriennummer des Programmes
-  //
-  constexpr char serialStr[] = "20210104-0003";
-  //
   // für RGB LED mit gemeinsamer Anode
   //
   constexpr bool rgbInverted = true;
   //
   // Zeit nach der bei WIFI-Verlust WiFi neu gestartet wird
   //
-  constexpr unsigned long timeToResetWiFi = 1000 * 20;
+  constexpr unsigned long timeToResetWiFi = 1000 * 10;
 
   //
   // Version des Speichers bei Versionen, wenn änderungen an speicher
@@ -43,7 +39,7 @@ namespace OTASrv
   constexpr char wasInitKey[] = "wasInit";                //! wurde schon initialisiert?
   constexpr char prefsVersionKey[] = "prefsVersion";      //! welche Version der Einstellungen?
   constexpr char SSIDKey[] = "SSID";                      //! an welchem WLAN anmelden (konfigurierbar)?
-  constexpr char passwordKey[] = "password";              //! welches PW im WLAN (konfigurierbar)
+  constexpr char wlanPasswordKey[] = "wlanPw";            //! welches PW im WLAN (konfigurierbar)
   constexpr char hostnameKey[] = "hostname";              //! welcher Hostname für das nDNS (konfigurierbar)
   constexpr char apiUserKey[] = "apiUser";                //! api user name (konfigurierbar, default null)
   constexpr char apiPasswordKey[] = "apiPassword";        //! api passwort (konfigurierbar, default null)
@@ -68,6 +64,9 @@ namespace OTASrv
   constexpr uint8_t PWM_LED_CHANNEL_BLUE = 2;   //! Channel blaue LED
   constexpr uint8_t PWM_LED_WHITE = 33;         //! Weiße LED
   constexpr uint8_t PWM_LED_CHANNEL_WHITE = 3;  //! Channel weiße LED
+  constexpr double PWM_MIN_FREQENCE = 400.0;    //! minimale erlaubtre Frequenz
+  constexpr double PWM_MAX_FREQENCE = 50000.0;  //! maximale erlaubtre Frequenz
+
   //
   // LED Ausgang GPIO für WLAN CONNECT
   //
@@ -93,5 +92,19 @@ namespace OTASrv
   constexpr char CMD_COLOR_WHITE[] = "white";
   constexpr char CMD_TRUE[] = "true";
   constexpr char CMD_FALSE[] = "false";
+
+  constexpr char CMD_PWM_RESOLUTION[] = "pwm_res";
+  constexpr char CMD_PWM_FREQUENCE[] = "pwm_freq";
+  constexpr char CMD_PWM_INVERSE[] = "pwm_inv";
+
+  constexpr char CMD_FW_USERID[] = "access_id";
+  constexpr char CMD_FW_PASSWD[] = "access_pw";
+
+  constexpr char CMD_API_USERID[] = "api_id";
+  constexpr char CMD_API_PASSWD[] = "api_pw";
+
+  constexpr char CMD_WLAN_SSID[] = "wlan_ssid";
+  constexpr char CMD_WLAN_PASSWD[] = "wlan_pw";
+  constexpr char CMD_WLAN_MDNSHOST[] = "mdns_host";
 
 }  // namespace OTASrv

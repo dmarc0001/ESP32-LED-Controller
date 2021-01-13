@@ -3,7 +3,6 @@
 OTASrv::OTAPrefs prefs;                  //! Preferenzen
 AsyncWebServer httpServer( 80 );         //! der eigentliche Webserver Prozess
 LedControl::LedControlClass ledControl;  //! Objekt zur Kontrolle der LED
-AsyncElegantOtaClass *otaServer;         //! Zeiger auf den OTA Serverprozess für loop()
 LedControl::LedStatusClass ledPrefs;     //! aktuelle Preferenzwerte für LED (in Prozenzen)
 
 void setup( void )
@@ -24,7 +23,7 @@ void setup( void )
   ledControl.standBy( false );
   ledControl.setPercentStatus( ledPrefs );
   initWiFi( prefs );
-  otaServer = initHttpServer( prefs, httpServer, &ledControl );
+  initHttpServer( prefs, httpServer, &ledControl );
 }
 
 void loop( void )
@@ -67,7 +66,7 @@ void loop( void )
       Serial.println( ">..." );
       Serial.print( "IP address: " );
       Serial.print( WiFi.localIP() );
-      Serial.print( "         " );
+      Serial.println( "         " );
       initMDNS( prefs );
       // otaServer = initHttpServer( prefs, httpServer );
       // signalisieren
@@ -94,6 +93,9 @@ void loop( void )
       if ( timeDelta >= OTASrv::timeToResetWiFi )
       {
         Serial.println( "\rWiFi reconnecting...               " );
+        Serial.print( "Reconnect to: <" );
+        Serial.print( prefs.getSSID() );
+        Serial.println( ">..." );
         WiFi.reconnect();
         delay( 300 );
         lastTimer = millis();
@@ -126,5 +128,6 @@ void loop( void )
   //
   // warten auf neustart nach Flash
   //
-  otaServer->loop();
+  AsyncElegantOTA.loop();
+  ApiJSONServer.loop();
 }

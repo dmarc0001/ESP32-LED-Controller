@@ -5,5 +5,9 @@
 
 /rest/identity      GET  -> REST Server identity
 /rest/led           GET  -> REST LED Status
-/rest/led           POST -> REST LEDCommand
-
+/rest/led           POST -> REST LED Command
+/rest/config        GET  -> REST Controller config GUI 
+/rest/pwm           POST -> REST set PWM Settings
+/rest/fw_access     POST -> REST set Firmware access informations
+/rest/api_access    POST -> REST set api access informations
+/rest/wlan_access   POST -> REAT set WLAN SSID,PASSWD,mDNS Hostname
