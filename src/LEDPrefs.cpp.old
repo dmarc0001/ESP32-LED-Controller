@@ -2,7 +2,7 @@
 
 namespace LEDSrv
 {
-  const char *LEDPrefs::serialStr = "20210113-131713-build-0127";
+  const char *LEDPrefs::serialStr = "20210113-160412-build-0171";
 
   LEDPrefs::LEDPrefs() : Preferences()
   {
@@ -14,7 +14,7 @@ namespace LEDSrv
 
   bool LEDPrefs::begin( bool readOnly )
   {
-    bool ret = Preferences::begin( "OTASrv", readOnly );
+    bool ret = Preferences::begin( "LEDServer", readOnly );
     //
     // ist der Speicher gültig?
     //
@@ -32,6 +32,21 @@ namespace LEDSrv
     return ret;
   }
 
+  bool LEDPrefs::isApRunning()
+  {
+    return apIsRunning;
+  }
+
+  void LEDPrefs::setApIsRunning( bool _ir )
+  {
+    apIsRunning = _ir;
+  }
+
+  bool LEDPrefs::isWlanSet()
+  {
+    return ( getBool( wasWlanSet, false ) );
+  }
+
   String LEDPrefs::getSSID()
   {
     return ( getString( SSIDKey, "nowhere" ) );
@@ -40,6 +55,7 @@ namespace LEDSrv
   void LEDPrefs::setSSID( String ssid )
   {
     putString( SSIDKey, ssid );
+    putBool( wasWlanSet, true );
   }
 
   String LEDPrefs::getPassword()
@@ -50,6 +66,24 @@ namespace LEDSrv
   void LEDPrefs::setPassword( String _pw )
   {
     putString( wlanPasswordKey, _pw );
+    putBool( wasWlanSet, true );
+  }
+
+  void LEDPrefs::clearSSID()
+  {
+    // an welchem WLAN anmelden?
+    String id = defaultSSID;
+    id += "-";
+#if defined( ESP8266 )
+    id += String( ESP.getChipId() );
+#elif defined( ESP32 )
+    id += String( ( uint32_t ) ESP.getEfuseMac(), HEX );
+#endif
+    id.toUpperCase();
+    putString( SSIDKey, id );
+    // welches PW im WLAN
+    putString( wlanPasswordKey, defaultPassword );
+    putBool( wasWlanSet, false );
   }
 
   String LEDPrefs::getSerialStr()
@@ -166,10 +200,19 @@ namespace LEDSrv
     Serial.println( "preferences initialize..." );
     // wurde der schon initialisiert?
     putBool( wasInitKey, true );
+    putBool( wasWlanSet, false );
     // welche Version der Einstellungen?
     putInt( prefsVersionKey, prefsVersion );
     // an welchem WLAN anmelden?
-    putString( SSIDKey, defaultSSID );
+    String id = defaultSSID;
+    id += "-";
+#if defined( ESP8266 )
+    id += String( ESP.getChipId() );
+#elif defined( ESP32 )
+    id += String( ( uint32_t ) ESP.getEfuseMac(), HEX );
+#endif
+    id.toUpperCase();
+    putString( SSIDKey, id );
     // welches PW im WLAN
     putString( wlanPasswordKey, defaultPassword );
     // welcher Hostname für das nDNS

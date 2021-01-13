@@ -212,6 +212,7 @@
             console.log('set passwd: ' + json.wlan_pw);
             console.log('set mdns host: ' + json.mdns_host);
             console.log('status: ' + json.status);
+            location.reload();
           }
         };
         var data = JSON.stringify({ 'wlan_ssid': ssid, 'wlan_pw': ssid_passwd, 'mdns_host': mdns_host });
@@ -295,6 +296,7 @@
             console.log('set account: ' + json.api_id);
             console.log('set passwd: ' + json.api_pw);
             console.log('status: ' + json.status);
+            location.reload();
           }
         };
         var data = JSON.stringify({ 'api_id': access_uid, 'api_pw': access_password });
@@ -349,6 +351,7 @@
                 console.log('set account: ' + json.access_id);
                 console.log('set passwd: ' + json.access_pw);
                 console.log('status: ' + json.status);
+                location.reload();
               }
             };
             var data = JSON.stringify({ 'access_id': access_uid, 'access_pw': access_password });
@@ -397,6 +400,7 @@
           console.log('pwm frequence: ' + json.pwm_freq);
           console.log('pwm invers: ' + json.pwm_inv);
           console.log('status: ' + json.status);
+          location.reload();
         }
       };
       var data = JSON.stringify({ 'pwm_res': pwm_res, 'pwm_freq': pwm_freq, 'pwm_inv': pwm_inv });
