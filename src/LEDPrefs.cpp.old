@@ -1,18 +1,18 @@
-#include "OTAPrefs.hpp"
+#include "LEDPrefs.hpp"
 
-namespace OTASrv
+namespace LEDSrv
 {
-  const char *OTAPrefs::serialStr = "20210113-122643-build-0125";
+  const char *LEDPrefs::serialStr = "20210113-131713-build-0127";
 
-  OTAPrefs::OTAPrefs() : Preferences()
+  LEDPrefs::LEDPrefs() : Preferences()
   {
   }
 
-  OTAPrefs::~OTAPrefs()
+  LEDPrefs::~LEDPrefs()
   {
   }
 
-  bool OTAPrefs::begin( bool readOnly )
+  bool LEDPrefs::begin( bool readOnly )
   {
     bool ret = Preferences::begin( "OTASrv", readOnly );
     //
@@ -32,107 +32,107 @@ namespace OTASrv
     return ret;
   }
 
-  String OTAPrefs::getSSID()
+  String LEDPrefs::getSSID()
   {
     return ( getString( SSIDKey, "nowhere" ) );
   }
 
-  void OTAPrefs::setSSID( String ssid )
+  void LEDPrefs::setSSID( String ssid )
   {
     putString( SSIDKey, ssid );
   }
 
-  String OTAPrefs::getPassword()
+  String LEDPrefs::getPassword()
   {
     return ( getString( wlanPasswordKey, "" ) );
   }
 
-  void OTAPrefs::setPassword( String _pw )
+  void LEDPrefs::setPassword( String _pw )
   {
     putString( wlanPasswordKey, _pw );
   }
 
-  String OTAPrefs::getSerialStr()
+  String LEDPrefs::getSerialStr()
   {
     return ( String( serialStr ) );
   }
 
-  String OTAPrefs::getHostname()
+  String LEDPrefs::getHostname()
   {
     return ( getString( hostnameKey, "localhost" ) );
   }
 
-  void OTAPrefs::setHostname( String _hostname )
+  void LEDPrefs::setHostname( String _hostname )
   {
     putString( hostnameKey, _hostname );
   }
 
-  String OTAPrefs::getApiUser()
+  String LEDPrefs::getApiUser()
   {
     return ( getString( apiUserKey ) );
   }
 
-  void OTAPrefs::setApiUser( String _userid )
+  void LEDPrefs::setApiUser( String _userid )
   {
     putString( apiUserKey, _userid );
   }
 
-  String OTAPrefs::getApiPassword()
+  String LEDPrefs::getApiPassword()
   {
     return ( getString( apiPasswordKey ) );
   }
 
-  void OTAPrefs::setApiPassword( String _pw )
+  void LEDPrefs::setApiPassword( String _pw )
   {
     putString( apiPasswordKey, _pw );
   }
 
-  String OTAPrefs::getUpdateUser()
+  String LEDPrefs::getUpdateUser()
   {
     return ( getString( updateUserKey ) );
   }
 
-  void OTAPrefs::setUpdateUser( String _userid )
+  void LEDPrefs::setUpdateUser( String _userid )
   {
     putString( updateUserKey, _userid );
   }
 
-  String OTAPrefs::getUpdatePassword()
+  String LEDPrefs::getUpdatePassword()
   {
     return ( getString( updatePasswordKey ) );
   }
 
-  void OTAPrefs::setUpdatePassword( String _passwd )
+  void LEDPrefs::setUpdatePassword( String _passwd )
   {
     putString( updatePasswordKey, _passwd );
   }
 
-  bool OTAPrefs::getIsLEDInvers()
+  bool LEDPrefs::getIsLEDInvers()
   {
     return ( getBool( invertedLEDKey, false ) );
   }
 
-  void OTAPrefs::setIsLEDInvers( bool _invers )
+  void LEDPrefs::setIsLEDInvers( bool _invers )
   {
     putBool( invertedLEDKey, _invers );
   }
 
-  uint8_t OTAPrefs::getPwmResolution()
+  uint8_t LEDPrefs::getPwmResolution()
   {
     return ( getUChar( pwmResolutionKey, 8 ) );
   }
 
-  void OTAPrefs::setPwmResolution( uint8_t _res )
+  void LEDPrefs::setPwmResolution( uint8_t _res )
   {
     putUChar( pwmResolutionKey, _res );
   }
 
-  double OTAPrefs::getPwmFreq()
+  double LEDPrefs::getPwmFreq()
   {
     return ( getDouble( pwmFreqKey, 5000.0 ) );
   }
 
-  void OTAPrefs::setPwmFreq( double _newFreq )
+  void LEDPrefs::setPwmFreq( double _newFreq )
   {
     //
     // wird erst nach einem Neustart wirksam
@@ -140,7 +140,7 @@ namespace OTASrv
     putDouble( pwmFreqKey, _newFreq );
   }
 
-  void OTAPrefs::getLedStats( LedControl::LedStatusClass &status )
+  void LEDPrefs::getLedStats( LedControl::LedStatusClass &status )
   {
     status.red = getDouble( savedREDValueKey, 100.0 );
     status.green = getDouble( savedGREENValueKey, 100.0 );
@@ -148,7 +148,7 @@ namespace OTASrv
     status.white = getDouble( savedWHITEValueKey, 100.0 );
   }
 
-  void OTAPrefs::setLedStats( LedControl::LedStatusClass &status )
+  void LEDPrefs::setLedStats( LedControl::LedStatusClass &status )
   {
     // default RGBW in Prozent
     putDouble( savedREDValueKey, status.red );
@@ -157,7 +157,7 @@ namespace OTASrv
     putDouble( savedWHITEValueKey, status.white );
   }
 
-  bool OTAPrefs::makeDefaults()
+  bool LEDPrefs::makeDefaults()
   {
     //
     // beginn muss gelaufen sein
@@ -199,4 +199,4 @@ namespace OTASrv
     return true;
   }
 
-}  // namespace OTASrv
+}  // namespace LEDSrv

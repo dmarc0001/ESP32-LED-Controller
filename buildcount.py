@@ -14,10 +14,10 @@ __version__ = '0.1'
 COUNTFILE = "count.cnt"
 TEMPFILE = "tempfile.tmp"
 SRCFOLDER = "src/"
-PREFS_FILE = "OTAPrefs.cpp"
+PREFS_FILE = "LEDPrefs.cpp"
 
-REGEX_EXPR = r"^\s+const\s+char\s+.OTAPrefs::serialStr\s+=\s+\".*\";.*"
-REPLACEMENT = "  const char *OTAPrefs::serialStr = \"{}\";\n"
+REGEX_EXPR = r"^\s+const\s+char\s+.LEDPrefs::serialStr\s+=\s+\".*\";.*"
+REPLACEMENT = "  const char *LEDPrefs::serialStr = \"{}\";\n"
 
 
 def create_countfile():
