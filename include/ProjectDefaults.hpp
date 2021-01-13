@@ -1,7 +1,7 @@
 #pragma once
 #include <Arduino.h>
 
-namespace OTASrv
+namespace LEDSrv
 {
   /****************************************************************************
    * Konstanten für das Programm +
@@ -107,4 +107,4 @@ namespace OTASrv
   constexpr char CMD_WLAN_PASSWD[] = "wlan_pw";
   constexpr char CMD_WLAN_MDNSHOST[] = "mdns_host";
 
-}  // namespace OTASrv
+}  // namespace LEDSrv

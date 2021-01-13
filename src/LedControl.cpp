@@ -31,7 +31,7 @@ namespace LedControl
     //
     // Invertierte Anschlüsse?
     //
-    if ( OTASrv::rgbInverted )
+    if ( LEDSrv::rgbInverted )
     {
       nullValue = static_cast< uint32_t >( _fsteps );
     }
@@ -42,10 +42,10 @@ namespace LedControl
     if ( _standby )
     {
       // LED löschen
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_RED, nullValue );
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_GREEN, nullValue );
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_BLUE, nullValue );
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_WHITE, nullValue );
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_RED, nullValue );
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_GREEN, nullValue );
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_BLUE, nullValue );
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_WHITE, nullValue );
     }
     else
     {
@@ -65,12 +65,12 @@ namespace LedControl
   /**
    * Initialisiere die LED Hardware
    */
-  void LedControlClass::init( OTASrv::OTAPrefs &prefs )
+  void LedControlClass::init( LEDSrv::LEDPrefs &prefs )
   {
     //
     // Namensraum der PREFS "ProjectDefaults.hpp"
     //
-    using namespace OTASrv;
+    using namespace LEDSrv;
     // Einstelungen lesen
     _inverted = prefs.getIsLEDInvers();
     uint8_t res = prefs.getPwmResolution();
@@ -135,7 +135,7 @@ namespace LedControl
    */
   void LedControlClass::readLedValuesToStatus( LedStatusClass &status )
   {
-    using namespace OTASrv;
+    using namespace LEDSrv;
     status.red = static_cast< double >( _inverted ? _steps - ledcRead( PWM_LED_CHANNEL_RED ) : ledcRead( PWM_LED_CHANNEL_RED ) );
     status.green = static_cast< double >( _inverted ? _steps - ledcRead( PWM_LED_CHANNEL_GREEN ) : ledcRead( PWM_LED_CHANNEL_GREEN ) );
     status.blue = static_cast< double >( _inverted ? _steps - ledcRead( PWM_LED_CHANNEL_BLUE ) : ledcRead( PWM_LED_CHANNEL_BLUE ) );
@@ -147,14 +147,14 @@ namespace LedControl
    */
   void LedControlClass::writeLedValuesFromStatus( const LedStatusClass &status )
   {
-    using namespace OTASrv;
+    using namespace LEDSrv;
 
     if ( !_standby )
     {
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_RED, static_cast< uint32_t >( _inverted ? _steps - status.red : status.red ) );
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_GREEN, static_cast< uint32_t >( _inverted ? _steps - status.green : status.green ) );
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_BLUE, static_cast< uint32_t >( _inverted ? _steps - status.blue : status.blue ) );
-      ledcWrite( OTASrv::PWM_LED_CHANNEL_WHITE, static_cast< uint32_t >( _inverted ? _steps - status.white : status.white ) );
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_RED, static_cast< uint32_t >( _inverted ? _steps - status.red : status.red ) );
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_GREEN, static_cast< uint32_t >( _inverted ? _steps - status.green : status.green ) );
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_BLUE, static_cast< uint32_t >( _inverted ? _steps - status.blue : status.blue ) );
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_WHITE, static_cast< uint32_t >( _inverted ? _steps - status.white : status.white ) );
       yield();
       delay( 40 );
     }

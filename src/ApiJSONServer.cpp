@@ -6,31 +6,31 @@ namespace APISrv
   //
   // Konstenate Strings initialisieren
   //
-  const JsonString ApiJSONServerClass::cmd_set_rgbw{ OTASrv::CMD_SET_RGBW };
-  const JsonString ApiJSONServerClass::cmd_get_rgbw{ OTASrv::CMD_GET_RGBW };
-  const JsonString ApiJSONServerClass::cmd_set_standby{ OTASrv::CMD_SET_STANDBY };
-  const JsonString ApiJSONServerClass::cmd_get_standby{ OTASrv::CMD_GET_STANDBY };
-  const JsonString ApiJSONServerClass::cmd_rgbw{ OTASrv::CMD_RGBW };
-  const JsonString ApiJSONServerClass::cmd_standby{ OTASrv::CMD_STANDBY };
-  const JsonString ApiJSONServerClass::cmd_color_red{ OTASrv::CMD_COLOR_RED };
-  const JsonString ApiJSONServerClass::cmd_color_green{ OTASrv::CMD_COLOR_GREEN };
-  const JsonString ApiJSONServerClass::cmd_color_blue{ OTASrv::CMD_COLOR_BLUE };
-  const JsonString ApiJSONServerClass::cmd_color_white{ OTASrv::CMD_COLOR_WHITE };
-  const JsonString ApiJSONServerClass::cmd_pwm_resolution{ OTASrv::CMD_PWM_RESOLUTION };
-  const JsonString ApiJSONServerClass::cmd_pwm_frequence{ OTASrv::CMD_PWM_FREQUENCE };
-  const JsonString ApiJSONServerClass::cmd_pwm_is_inverse{ OTASrv::CMD_PWM_INVERSE };
-  const JsonString ApiJSONServerClass::cmd_fw_userid{ OTASrv::CMD_FW_USERID };
-  const JsonString ApiJSONServerClass::cmd_fw_passwd{ OTASrv::CMD_FW_PASSWD };
-  const JsonString ApiJSONServerClass::cmd_api_userid{ OTASrv::CMD_API_USERID };
-  const JsonString ApiJSONServerClass::cmd_api_passwd{ OTASrv::CMD_API_PASSWD };
-  const JsonString ApiJSONServerClass::cmd_wlan_ssid{ OTASrv::CMD_WLAN_SSID };
-  const JsonString ApiJSONServerClass::cmd_wlan_passwd{ OTASrv::CMD_WLAN_PASSWD };
-  const JsonString ApiJSONServerClass::cmd_wlan_mdns{ OTASrv::CMD_WLAN_MDNSHOST };
+  const JsonString ApiJSONServerClass::cmd_set_rgbw{ LEDSrv::CMD_SET_RGBW };
+  const JsonString ApiJSONServerClass::cmd_get_rgbw{ LEDSrv::CMD_GET_RGBW };
+  const JsonString ApiJSONServerClass::cmd_set_standby{ LEDSrv::CMD_SET_STANDBY };
+  const JsonString ApiJSONServerClass::cmd_get_standby{ LEDSrv::CMD_GET_STANDBY };
+  const JsonString ApiJSONServerClass::cmd_rgbw{ LEDSrv::CMD_RGBW };
+  const JsonString ApiJSONServerClass::cmd_standby{ LEDSrv::CMD_STANDBY };
+  const JsonString ApiJSONServerClass::cmd_color_red{ LEDSrv::CMD_COLOR_RED };
+  const JsonString ApiJSONServerClass::cmd_color_green{ LEDSrv::CMD_COLOR_GREEN };
+  const JsonString ApiJSONServerClass::cmd_color_blue{ LEDSrv::CMD_COLOR_BLUE };
+  const JsonString ApiJSONServerClass::cmd_color_white{ LEDSrv::CMD_COLOR_WHITE };
+  const JsonString ApiJSONServerClass::cmd_pwm_resolution{ LEDSrv::CMD_PWM_RESOLUTION };
+  const JsonString ApiJSONServerClass::cmd_pwm_frequence{ LEDSrv::CMD_PWM_FREQUENCE };
+  const JsonString ApiJSONServerClass::cmd_pwm_is_inverse{ LEDSrv::CMD_PWM_INVERSE };
+  const JsonString ApiJSONServerClass::cmd_fw_userid{ LEDSrv::CMD_FW_USERID };
+  const JsonString ApiJSONServerClass::cmd_fw_passwd{ LEDSrv::CMD_FW_PASSWD };
+  const JsonString ApiJSONServerClass::cmd_api_userid{ LEDSrv::CMD_API_USERID };
+  const JsonString ApiJSONServerClass::cmd_api_passwd{ LEDSrv::CMD_API_PASSWD };
+  const JsonString ApiJSONServerClass::cmd_wlan_ssid{ LEDSrv::CMD_WLAN_SSID };
+  const JsonString ApiJSONServerClass::cmd_wlan_passwd{ LEDSrv::CMD_WLAN_PASSWD };
+  const JsonString ApiJSONServerClass::cmd_wlan_mdns{ LEDSrv::CMD_WLAN_MDNSHOST };
 
   /**
    * Starte den JSON Server
    */
-  void ApiJSONServerClass::begin( AsyncWebServer *server, OTASrv::OTAPrefs &prefs, LedControl::LedControlClass *ledControl )
+  void ApiJSONServerClass::begin( AsyncWebServer *server, LEDSrv::LEDPrefs &prefs, LedControl::LedControlClass *ledControl )
   {
     _server = server;
     _ledControl = ledControl;
@@ -555,7 +555,7 @@ namespace APISrv
       {
         double pwm_freq = jobj[ cmd_pwm_frequence ].as< double >();
         //
-        if ( pwm_freq >= OTASrv::PWM_MIN_FREQENCE && pwm_freq <= OTASrv::PWM_MAX_FREQENCE )
+        if ( pwm_freq >= LEDSrv::PWM_MIN_FREQENCE && pwm_freq <= LEDSrv::PWM_MAX_FREQENCE )
         {
           Serial.print( "pwm cmd: <" );
           Serial.print( cmd_pwm_frequence.c_str() );
