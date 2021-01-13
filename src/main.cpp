@@ -1,6 +1,6 @@
 #include "main.hpp"
 
-OTASrv::OTAPrefs prefs;                  //! Preferenzen
+LEDSrv::LEDPrefs prefs;                  //! Preferenzen
 AsyncWebServer httpServer( 80 );         //! der eigentliche Webserver Prozess
 LedControl::LedControlClass ledControl;  //! Objekt zur Kontrolle der LED
 LedControl::LedStatusClass ledPrefs;     //! aktuelle Preferenzwerte für LED (in Prozenzen)
@@ -70,7 +70,7 @@ void loop( void )
       initMDNS( prefs );
       // otaServer = initHttpServer( prefs, httpServer );
       // signalisieren
-      digitalWrite( OTASrv::LED_WLANOK, HIGH );
+      digitalWrite( LEDSrv::LED_WLANOK, HIGH );
       isOnline = true;
       lastTimer = millis();
     }
@@ -87,10 +87,10 @@ void loop( void )
         // Jede Sekunde Meldung
         //
         Serial.print( "Disconnected: time to reset WiFi: " );
-        Serial.print( int( ( OTASrv::timeToResetWiFi - timeDelta ) / 1000 ) );
+        Serial.print( int( ( LEDSrv::timeToResetWiFi - timeDelta ) / 1000 ) );
         Serial.print( "   \r" );
       }
-      if ( timeDelta >= OTASrv::timeToResetWiFi )
+      if ( timeDelta >= LEDSrv::timeToResetWiFi )
       {
         Serial.println( "\rWiFi reconnecting...               " );
         Serial.print( "Reconnect to: <" );
@@ -114,7 +114,7 @@ void loop( void )
       // Status grändert!
       //
       // signalisieren
-      digitalWrite( OTASrv::LED_WLANOK, LOW );
+      digitalWrite( LEDSrv::LED_WLANOK, LOW );
       isOnline = false;
     }
     else

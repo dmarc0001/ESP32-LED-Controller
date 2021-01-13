@@ -9,17 +9,17 @@ namespace LedControl
   class LedStatusClass;
 }  // namespace LedControl
 
-namespace OTASrv
+namespace LEDSrv
 {
   // TODO: set String values begrenzen
-  class OTAPrefs : public Preferences
+  class LEDPrefs : public Preferences
   {
     private:
     static const char *serialStr;
 
     public:
-    OTAPrefs();
-    ~OTAPrefs();
+    LEDPrefs();
+    ~LEDPrefs();
 
     bool begin( bool readOnly = false );
     String getSSID();
@@ -49,4 +49,4 @@ namespace OTASrv
     private:
     bool makeDefaults();
   };
-}  // namespace OTASrv
+}  // namespace LEDSrv

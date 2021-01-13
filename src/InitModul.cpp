@@ -7,7 +7,7 @@ APISrv::ApiJSONServerClass ApiJSONServer;  //! mein REST Server
 /**
  * Initialisiere den NVM Speicher
  */
-void initPrefs( OTASrv::OTAPrefs &prefs )
+void initPrefs( LEDSrv::LEDPrefs &prefs )
 {
   Serial.println( "init non volatile store..." );
   esp_err_t ret = nvs_flash_init();
@@ -34,7 +34,7 @@ void initPrefs( OTASrv::OTAPrefs &prefs )
 /**
  * Initialisiere PWM für LED
  */
-void initPWM( LedControl::LedControlClass &ledControl, OTASrv::OTAPrefs &prefs )
+void initPWM( LedControl::LedControlClass &ledControl, LEDSrv::LEDPrefs &prefs )
 {
   Serial.println( "init PWM (LED Conrtrol)..." );
   ledControl.init( prefs );
@@ -44,7 +44,7 @@ void initPWM( LedControl::LedControlClass &ledControl, OTASrv::OTAPrefs &prefs )
 /**
  * Initialisiere WLAN NEtzwerk
  */
-void initWiFi( OTASrv::OTAPrefs &prefs )
+void initWiFi( LEDSrv::LEDPrefs &prefs )
 {
   Serial.println( "init WIFI... " );
   WiFi.mode( WIFI_STA );
@@ -59,7 +59,7 @@ void initWiFi( OTASrv::OTAPrefs &prefs )
 /**
  * initialisiere mDNS
  */
-void initMDNS( OTASrv::OTAPrefs &prefs )
+void initMDNS( LEDSrv::LEDPrefs &prefs )
 {
   Serial.println( "start mDNS Service..." );
   mdns_free();
@@ -90,7 +90,7 @@ void initMDNS( OTASrv::OTAPrefs &prefs )
 /**
  * initialisiere den Webserver
  */
-void initHttpServer( OTASrv::OTAPrefs &prefs, AsyncWebServer &httpServer, LedControl::LedControlClass *ledControl )
+void initHttpServer( LEDSrv::LEDPrefs &prefs, AsyncWebServer &httpServer, LedControl::LedControlClass *ledControl )
 {
   //
   // der root zugriff
