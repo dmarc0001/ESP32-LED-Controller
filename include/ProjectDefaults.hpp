@@ -19,24 +19,23 @@ namespace LEDSrv
   // Version des Speichers bei Versionen, wenn änderungen an speicher
   // muss die Version erhöhr werden und im code reagiert werden
   //
-  constexpr int prefsVersion = 2;
+  constexpr int prefsVersion = 1;
   //
   // Konfigurierbare Parameter
   //
-  // constexpr char defaultSSID[] = "cryptoWLANGallileo";  //! SSID für WLAN
-  // constexpr char defaultPassword[] = "sommerSonne92";   //! Passwort für WLAN
-  constexpr char defaultSSID[] = "Controller";                 //! SSID für WLAN
-  constexpr char defaultPassword[] = "serverSaturnRinge2610";  //! Passwort für WLAN
-  constexpr char hostname[] = "OTA-Server";                    //! Eigener Hostname für MDNS
-  constexpr char updateUser[] = "admin";                       //! name des OTA Berechtigten
-  constexpr char updatePassword[] = "admin";                   //! Passwort des OTA Berechtigten
-  constexpr double PWM_LED_FREQ = 10000.0;                     //! PWM Frequenz default
-  constexpr uint8_t PWM_RESOLUTION = 10;                       //! PWM Resolution 8, 10, 12, 15 BITS default
+  constexpr char defaultSSID[] = "LED-AP";        //! SSID für WLAN-Accesspoint
+  constexpr char defaultPassword[] = "password";  //! Passwort für WLAN
+  constexpr char hostname[] = "OTA-Server";       //! Eigener Hostname für MDNS
+  constexpr char updateUser[] = "admin";          //! name des OTA Berechtigten
+  constexpr char updatePassword[] = "admin";      //! Passwort des OTA Berechtigten
+  constexpr double PWM_LED_FREQ = 10000.0;        //! PWM Frequenz default
+  constexpr uint8_t PWM_RESOLUTION = 10;          //! PWM Resolution 8, 10, 12, 15 BITS default
   //
   // die Schlüsselnamen für den Speicher
   // Einstelungen für den Controller
   //
   constexpr char wasInitKey[] = "wasInit";                //! wurde schon initialisiert?
+  constexpr char wasWlanSet[] = "wasWlanSet";             //! wurde ein wlan eingerichtet?
   constexpr char prefsVersionKey[] = "prefsVersion";      //! welche Version der Einstellungen?
   constexpr char SSIDKey[] = "SSID";                      //! an welchem WLAN anmelden (konfigurierbar)?
   constexpr char wlanPasswordKey[] = "wlanPw";            //! welches PW im WLAN (konfigurierbar)
@@ -66,6 +65,7 @@ namespace LEDSrv
   constexpr uint8_t PWM_LED_CHANNEL_WHITE = 3;  //! Channel weiße LED
   constexpr double PWM_MIN_FREQENCE = 400.0;    //! minimale erlaubtre Frequenz
   constexpr double PWM_MAX_FREQENCE = 50000.0;  //! maximale erlaubtre Frequenz
+  constexpr uint8_t RESET_SWITCH_PIN = 34;      //! GPIO RESET INPUT
 
   //
   // LED Ausgang GPIO für WLAN CONNECT

@@ -10,9 +10,34 @@ void setup( void )
   //
   // alles im Programm initialisieren
   //
+  pinMode( LEDSrv::RESET_SWITCH_PIN, INPUT );
   Serial.begin( 115200 );
   Serial.println( "" );
   Serial.println( "controller is starting..." );
+  if ( checkReset() )
+  {
+    int blink = 0;
+    Serial.println( "Controller propertys RESET..." );
+    Serial.println( "erase store...." );
+    ESP_ERROR_CHECK( nvs_flash_erase() );
+    Serial.println( "release reset bridge!" );
+    pinMode( LEDSrv::LED_WLANOK, OUTPUT );
+    //
+    while ( 1 )
+    {
+      delay( 300 );
+      if ( blink == 0 )
+      {
+        digitalWrite( LEDSrv::LED_WLANOK, LOW );
+        ++blink;
+      }
+      else
+      {
+        digitalWrite( LEDSrv::LED_WLANOK, HIGH );
+        blink = 0;
+      }
+    }
+  }
   // Einstellungen
   initPrefs( prefs );
   initPWM( ledControl, prefs );
@@ -22,7 +47,14 @@ void setup( void )
   prefs.getLedStats( ledPrefs );
   ledControl.standBy( false );
   ledControl.setPercentStatus( ledPrefs );
-  initWiFi( prefs );
+  if ( prefs.isWlanSet() )
+  {
+    initWiFi( prefs );
+  }
+  else
+  {
+    initWiFiAp( prefs, prefs.getSSID(), prefs.getPassword() );
+  }
   initHttpServer( prefs, httpServer, &ledControl );
 }
 
@@ -30,6 +62,7 @@ void loop( void )
 {
   static volatile bool isOnline = false;
   static volatile unsigned long lastTimer = 0;
+  static volatile uint8_t connect_attempts = 5;
   //
   // warte immer etwa 2 Sekunden
   //
@@ -51,7 +84,7 @@ void loop( void )
   //
   // checke WiFi Status
   //
-  if ( !isOnline )
+  if ( !isOnline && !prefs.isApRunning() )
   {
     //
     // flag für offline war gesetzt
@@ -73,6 +106,7 @@ void loop( void )
       digitalWrite( LEDSrv::LED_WLANOK, HIGH );
       isOnline = true;
       lastTimer = millis();
+      connect_attempts = 5;
     }
     else
     {
@@ -96,9 +130,16 @@ void loop( void )
         Serial.print( "Reconnect to: <" );
         Serial.print( prefs.getSSID() );
         Serial.println( ">..." );
+        if ( --connect_attempts == 0 )
+        {
+          initWiFiAp( prefs, LEDSrv::defaultSSID, LEDSrv::defaultPassword );
+          // bis zum reboot
+          return;
+        }
         WiFi.reconnect();
         delay( 300 );
         lastTimer = millis();
+        --connect_attempts;
       }
     }
   }
@@ -116,6 +157,7 @@ void loop( void )
       // signalisieren
       digitalWrite( LEDSrv::LED_WLANOK, LOW );
       isOnline = false;
+      connect_attempts = 5;
     }
     else
     {

@@ -4,6 +4,14 @@
 AsyncElegantOtaClass AsyncElegantOTA;      // der OTA Server
 APISrv::ApiJSONServerClass ApiJSONServer;  //! mein REST Server
 
+bool checkReset()
+{
+  int val = digitalRead( LEDSrv::RESET_SWITCH_PIN );
+  if ( val == 0 )
+    return ( true );
+  return ( false );
+}
+
 /**
  * Initialisiere den NVM Speicher
  */
@@ -36,7 +44,7 @@ void initPrefs( LEDSrv::LEDPrefs &prefs )
  */
 void initPWM( LedControl::LedControlClass &ledControl, LEDSrv::LEDPrefs &prefs )
 {
-  Serial.println( "init PWM (LED Conrtrol)..." );
+  Serial.println( "init PWM (LED Control)..." );
   ledControl.init( prefs );
   Serial.println( "init PWM (LED Control)...OK" );
 }
@@ -54,6 +62,27 @@ void initWiFi( LEDSrv::LEDPrefs &prefs )
   Serial.print( prefs.getPassword() );
   Serial.println( ">..." );
   WiFi.begin( prefs.getSSID().c_str(), prefs.getPassword().c_str() );
+  prefs.setApIsRunning( false );
+}
+
+/**
+ * init as accesspoint
+ */
+void initWiFiAp( LEDSrv::LEDPrefs &prefs, String ssid, String pw )
+{
+  Serial.println( "init WIFI as access point... " );
+  WiFi.mode( WIFI_AP );
+  IPAddress _loc;
+  _loc.fromString( "192.168.0.1" );
+  IPAddress _gw;
+  _gw.fromString( "255.255.255.0" );
+  WiFi.softAPConfig( _loc, _loc, _gw );
+  WiFi.softAP( ssid.c_str(), pw.c_str(), 1, 0, 2 );
+  IPAddress IP = WiFi.softAPIP();
+  Serial.print( "AP IP address: <" );
+  Serial.print( IP );
+  Serial.println( ">..." );
+  prefs.setApIsRunning( true );
 }
 
 /**
