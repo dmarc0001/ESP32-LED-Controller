@@ -16,14 +16,19 @@ namespace LEDSrv
   {
     private:
     static const char *serialStr;
+    bool apIsRunning{ false };
 
     public:
     LEDPrefs();
     ~LEDPrefs();
 
     bool begin( bool readOnly = false );
+    bool isApRunning();
+    void setApIsRunning( bool );
+    bool isWlanSet();
     String getSSID();
     void setSSID( String );
+    void clearSSID();
     String getPassword();
     void setPassword( String );
     String getSerialStr();
@@ -45,8 +50,7 @@ namespace LEDSrv
     void setPwmFreq( double newFreq );
     void getLedStats( LedControl::LedStatusClass & );
     void setLedStats( LedControl::LedStatusClass & );
-
-    private:
+    //
     bool makeDefaults();
   };
 }  // namespace LEDSrv

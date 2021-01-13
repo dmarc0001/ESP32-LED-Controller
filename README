@@ -1,13 +1,44 @@
 
+Controller for LED RGBW stripes etc
+
+
+OverTheAir URL's
+================================================================
 /identity           GET  -> OTA ID
 /update             GET  -> OTA GUI
 /update             POST -> OTA internal
 
+LED Control 
+/                   GET  -> Control GUI
+/rest/config        GET  -> REST Controller config GUI 
+
+REST API Url's
+================================================================
 /rest/identity      GET  -> REST Server identity
 /rest/led           GET  -> REST LED Status
 /rest/led           POST -> REST LED Command
-/rest/config        GET  -> REST Controller config GUI 
 /rest/pwm           POST -> REST set PWM Settings
 /rest/fw_access     POST -> REST set Firmware access informations
 /rest/api_access    POST -> REST set api access informations
 /rest/wlan_access   POST -> REAT set WLAN SSID,PASSWD,mDNS Hostname
+
+Factory RESET GPIO34 (defined in ProjectDefaults.hpp "RESET_SWITCH_PIN") 
+to ground while start controller.
+
+Than controller spans an WLAN as Accesspoint with addr 192.168.0.1 
+and SSID "LED-AP-XXXXXX" while XXXX is the internal chip number.
+
+You can put the controller in your WLAN over Url
+http://192.168.0.1/ (then click in "config controller") 
+  or
+http://192.168.0.1/rest/config
+
+the initial account is admin, password admin
+
+You can config the PWM resolution (8, 10, 12 or 15 bits), the frequency 
+in range 500 Hz up to 50 kHz.
+You can also (for example for one anode RGB LED) invert the PWM signal.
+This propertys ar availible in the config page.
+You can also set the account for config, and if you whish an account 
+for using the API.
+
