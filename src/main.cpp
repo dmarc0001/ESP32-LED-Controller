@@ -75,10 +75,10 @@ void loop( void )
       //
       // Da war was geändert => Sichern
       //
-      Serial.println( "changed LED preerences: save to store..." );
+      Serial.println( "changed LED preferences: save to store..." );
       prefs.setLedStats( ledCurrent );
       prefs.getLedStats( ledPrefs );
-      Serial.println( "changed LED preerences: save to store...OK" );
+      Serial.println( "changed LED preferences: save to store...OK" );
     }
   }
   //
@@ -101,11 +101,11 @@ void loop( void )
       Serial.print( WiFi.localIP() );
       Serial.println( "         " );
       initMDNS( prefs );
-      // otaServer = initHttpServer( prefs, httpServer );
       // signalisieren
       digitalWrite( LEDSrv::LED_WLANOK, HIGH );
       isOnline = true;
       lastTimer = millis();
+      // wieder fünf Verbindungsversuche erlauben
       connect_attempts = 5;
     }
     else

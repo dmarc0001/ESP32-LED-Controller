@@ -1,1 +1,1 @@
-const uint32_t CONFIG_PAGE_SIZE = 3202;
+const uint32_t CONFIG_PAGE_SIZE = 3199;

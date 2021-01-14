@@ -9,6 +9,22 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
+    h1 {
+      text-transform: uppercase;
+      font-weight: bolder;
+      font-size: larger;
+      padding-left: 1em;
+      padding-top: 1em;
+      width: 85%;
+      border-bottom: medium solid rgb(92, 92, 92);
+      padding-bottom: .3em;
+    }
+
+    h1:first-letter {
+      font-size: x-large;
+      color: crimson;
+    }
+
     a {
       padding: 1em;
       border: 1px solid gray;
@@ -30,11 +46,13 @@
 
     div.complete {
       margin: 0;
-      position: absolute;
-      top: 50%;
-      width: 100%;
-      -ms-transform: translateY(-50%);
-      transform: translateY(-50%);
+      margin-top: 2em;
+      width: 80%;
+      -ms-transform: translateX(+10%);
+      transform: translateX(+10%);
+      border: thin solid gray;
+      border-radius: 1em;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     }
 
     div.workarea,
@@ -45,6 +63,7 @@
 
     div.linkarea {
       margin-top: 2.5em;
+      margin-bottom: 2.5em;
     }
 
     /* switche */
@@ -107,7 +126,7 @@
 
     /*color picker*/
     input.color_picker {
-      border-radius: .2em;
+      border-radius: .4em;
       width: 45%;
       height: 5em;
       padding: .6em;
@@ -120,6 +139,14 @@
 
     /*kleine Displays*/
     @media all and (max-width: 75em) {
+      h1 {
+        font-size: xxx-large;
+      }
+
+      h1:first-letter {
+        font-size: xxx-large;
+      }
+
       a {
         padding: 2em;
         font-weight: bold;
@@ -132,6 +159,7 @@
 
       div.linkarea {
         margin-top: 5em;
+        margin-bottom: 5em;
         font-size: 2em
       }
 
@@ -154,7 +182,7 @@
 
       /*color picker*/
       input.color_picker {
-        border-radius: .4em;
+        border-radius: .8em;
         width: 75%;
         height: 10em;
         padding: .6em;
@@ -175,6 +203,7 @@
     var busyLockStart = 30;
     var colorReload = 0;
     var currentColor = 0;
+    var ignoreCallback = false;
 
     function init_page() {
       getColorFromController();
@@ -191,10 +220,9 @@
         if (lastChange > 0) { lastChange-- };
         if (busyLock > 0) { busyLock-- };
         colorReload += 1;
-        if (busyLock <= 0 && (colorReload % 8 > 0)) {
+        if (busyLock <= 0 && (colorReload % 6 == 0)) {
           getColorFromController();
         }
-
       }, 500);
     }
 
@@ -207,8 +235,9 @@
     }
 
     function getColorFromController() {
-      elem = document.getElementById("color_picker");
-      if (elem) {
+      var elem = document.getElementById("color_picker");
+      var elem2 = document.getElementById('led_standby_checkbox');
+      if (elem && elem2) {
         busyLock = busyLockStart;
         var xhr = new XMLHttpRequest();
         var url = '/rest/led';
@@ -225,7 +254,14 @@
               if (currentColor != colorValue) {
                 currentColor = colorValue;
                 elem.value = colorValue;
-                console.log("recived color: <" + colorValue + ">")
+                console.debug("recived color: <" + colorValue + ">")
+              }
+              var recivedStandby = (JSON.stringify(json.standby) == "true");
+              if (elem2.checked == recivedStandby) {
+                ignoreCallback = true;
+                elem2.checked = !recivedStandby;
+                console.debug("standby checkbox set to: <" + recivedStandby + ">");
+                ignoreCallback = false;
               }
             }
             busyLock = 0;
@@ -235,13 +271,12 @@
       }
     }
 
-
     function colorChange(elem) {
       console.debug("color entry change");
       lastChange = 0;
       busyLock = 0;
       colorInput(elem);
-      document.getElementById("color_picker_area").style.backgroundColor = /*"#f0f0f0";*/ "initial";
+      document.getElementById("color_picker_area").style.backgroundColor = "initial";
     }
 
     function colorInput(elem) {
@@ -253,9 +288,8 @@
         return;
       }
       lastChange = 1;
-      /*hex string to int*/
       var rgbColor = parseInt(theColor.substring(1), 16);
-      // change to rgb signle values */
+      // change to rgb single values */
       red_val = (((rgbColor & 0xff0000) >> 16) * 100.0) / 255.0;
       green_val = (((rgbColor & 0x00ff00) >> 8) * 100.0) / 255.0;
       blue_val = ((rgbColor & 0x0000ff) * 100.0) / 255.0;
@@ -265,6 +299,10 @@
     }
 
     function setStandby(is_stb) {
+      if (ignoreCallback) {
+        console.debug("ignored callback for standby...");
+        return;
+      }
       var xhr = new XMLHttpRequest();
       var url = '/rest/led';
       var stb = 'true';
@@ -276,11 +314,11 @@
       xhr.onreadystatechange = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
           var json = JSON.parse(xhr.responseText);
-          console.debug('standby:' + json.standby + ', error:' + json.error);
+          console.debug('standby:' + json.standby);
         }
       };
       var data = JSON.stringify({ 'set_standby': stb });
-      console.debug(data);
+      console.debug("dend to controller: " + data);
       xhr.send(data);
     }
 
@@ -305,6 +343,7 @@
 </header>
 
 <body onload="init_page()" id="color_picker_area">
+  <h1>LED Page</h1>
   <div class="complete">
     <div class="workarea">
       <label class="color_picker" for="led_standby_checkbox">LED STANDBY</label>
