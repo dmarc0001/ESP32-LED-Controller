@@ -31,7 +31,7 @@ namespace LedControl
     //
     // Invertierte Anschlüsse?
     //
-    if ( LEDSrv::rgbInverted )
+    if ( _inverted )
     {
       nullValue = _steps;
     }

@@ -63,7 +63,7 @@ namespace LEDSrv
   constexpr uint8_t PWM_LED_CHANNEL_BLUE = 2;   //! Channel blaue LED
   constexpr uint8_t PWM_LED_WHITE = 33;         //! Weiße LED
   constexpr uint8_t PWM_LED_CHANNEL_WHITE = 3;  //! Channel weiße LED
-  constexpr double PWM_MIN_FREQENCE = 400.0;    //! minimale erlaubtre Frequenz
+  constexpr double PWM_MIN_FREQENCE = 100.0;    //! minimale erlaubtre Frequenz
   constexpr double PWM_MAX_FREQENCE = 50000.0;  //! maximale erlaubtre Frequenz
   constexpr uint8_t RESET_SWITCH_PIN = 34;      //! GPIO RESET INPUT
 

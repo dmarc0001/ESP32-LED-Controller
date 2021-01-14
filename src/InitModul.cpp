@@ -45,6 +45,10 @@ void initPrefs( LEDSrv::LEDPrefs &prefs )
 void initPWM( LedControl::LedControlClass &ledControl, LEDSrv::LEDPrefs &prefs )
 {
   Serial.println( "init PWM (LED Control)..." );
+  if ( prefs.getIsLEDInvers() )
+  {
+    Serial.println( "PWM signal is inverted..." );
+  }
   ledControl.init( prefs );
   Serial.println( "init PWM (LED Control)...OK" );
 }

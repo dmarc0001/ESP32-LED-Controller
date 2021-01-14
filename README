@@ -37,7 +37,7 @@ http://192.168.0.1/rest/config
 the initial account is admin, password admin
 
 You can config the PWM resolution (8, 10, 12 or 15 bits), the frequency 
-in range 400 Hz up to 50 kHz.
+in range 100 Hz up to 50 kHz.
 You can also (for example for one anode RGB LED) invert the PWM signal.
 This propertys ar availible in the config page.
 You can also set the account for config, and if you whish an account 

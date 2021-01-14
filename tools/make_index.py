@@ -12,12 +12,12 @@ Versionsnummer hochzählen für UPDATE
 __author__ = 'Dirk Marciniak'
 __copyright__ = 'Copyright 2020'
 __license__ = 'GPL'
-__version__ = '0.2'
+__version__ = '0.3'
 
 """
 mache index.html zu index.hex
 """
-
+INFILE_FRAGMENT = "index"
 OUTPATH          = "../include/"
 LENSTR           = "const uint32_t INDEX_PAGE_SIZE = {};"
 CONTENTSTR_START = "uint8_t INDEX_PAGE_CONTENT[] PROGMEM = { "
@@ -102,8 +102,7 @@ def encode_to_hexdump(file):
 
 
 def main():
-    infile = None
-    outfile = None
+    infile = INFILE_FRAGMENT
     #
     # parse argumente
     #
@@ -118,13 +117,10 @@ def main():
     #
     if args.infile:
         infile = args.infile
-        if path.isfile(infile + ".html"):
-            print("infile is a file and his name is {}".format(infile + ".html"))
-        else:
-            print('infile {} is not exist. abort.'.format(infile + ".html"))
-            exit(-1)
+    if path.isfile(infile + ".html"):
+        print("infile is a file and his name is {}".format(infile + ".html"))
     else:
-        print("there is no infile, abort!")
+        print('infile {} is not exist. abort.'.format(infile + ".html"))
         exit(-1)
     encode_to_hexdump(infile)
 
