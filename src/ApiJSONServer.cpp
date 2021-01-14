@@ -591,13 +591,9 @@ namespace APISrv
       pwmValStr.trim();
       if ( 0 != pwmValStr.compareTo( "null" ) )
       {
-        bool pwm_inv = jobj[ cmd_pwm_is_inverse ].as< bool >();
-        Serial.print( "pwm cmd: <" );
-        Serial.print( cmd_pwm_is_inverse.c_str() );
-        Serial.print( "> : " );
-        Serial.println( pwm_inv );
+        int pwm_inv = jobj[ cmd_pwm_is_inverse ].as< int >();
         //
-        if ( _prefs->getIsLEDInvers() != pwm_inv )
+        if ( _prefs->getIsLEDInvers() != ( pwm_inv == 0 ? false : true ) )
         {
           Serial.print( "pwm cmd: <" );
           Serial.print( cmd_pwm_is_inverse.c_str() );
@@ -607,7 +603,7 @@ namespace APISrv
           // geändert, das Gerät muss neu gestartet werden
           //
           have_to_boot = true;
-          _prefs->setIsLEDInvers( pwm_inv );
+          _prefs->setIsLEDInvers( pwm_inv == 0 ? false : true );
         }
 
         answer[ cmd_pwm_is_inverse ] = "OK";
@@ -670,12 +666,12 @@ namespace APISrv
     //
     for ( auto p : jobj )
     {
-      Serial.print( "api rest cmd: <" );
-      Serial.print( p.key().c_str() );
-      Serial.println( ">" );
       // is a JsonString
       if ( p.key() == cmd_set_rgbw )
       {
+        Serial.print( "api rest cmd: <" );
+        Serial.print( p.key().c_str() );
+        Serial.println( ">" );
         //
         // SETZE LED auf Werte...
         //
@@ -717,6 +713,10 @@ namespace APISrv
         // setzt STANDBY Wert
         //
         String stbyVal( p.value().as< String >() );
+        Serial.print( "api rest cmd: <standby> to <" );
+        Serial.print( stbyVal );
+        Serial.println( ">" );
+
         // vergleiche
         if ( stbyVal == cmd_true )
         {
@@ -741,7 +741,7 @@ namespace APISrv
           return request;
         }
         //
-        // Wenn was gemaccht wurde
+        // Wenn was gemacht wurde
         //
         answer[ cmd_standby ] = _ledControl->isStandBy();
         serializeJsonPretty( answer, content );

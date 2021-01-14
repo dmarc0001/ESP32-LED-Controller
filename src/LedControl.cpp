@@ -3,7 +3,7 @@
 namespace LedControl
 {
   /**
-   * Der Konsgtruktor
+   * Der Konstruktor
    */
   LedControlClass::LedControlClass() : _standby( false )
   {
@@ -33,7 +33,7 @@ namespace LedControl
     //
     if ( LEDSrv::rgbInverted )
     {
-      nullValue = static_cast< uint32_t >( _fsteps );
+      nullValue = _steps;
     }
     _standby = standby;
     //
@@ -156,7 +156,7 @@ namespace LedControl
       ledcWrite( LEDSrv::PWM_LED_CHANNEL_BLUE, static_cast< uint32_t >( _inverted ? _steps - status.blue : status.blue ) );
       ledcWrite( LEDSrv::PWM_LED_CHANNEL_WHITE, static_cast< uint32_t >( _inverted ? _steps - status.white : status.white ) );
       yield();
-      delay( 40 );
+      delay( 10 );
     }
   }
 

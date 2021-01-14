@@ -212,7 +212,7 @@
             console.log('set passwd: ' + json.wlan_pw);
             console.log('set mdns host: ' + json.mdns_host);
             console.log('status: ' + json.status);
-            location.reload();
+            location.replace('/');
           }
         };
         var data = JSON.stringify({ 'wlan_ssid': ssid, 'wlan_pw': ssid_passwd, 'mdns_host': mdns_host });
@@ -296,7 +296,7 @@
             console.log('set account: ' + json.api_id);
             console.log('set passwd: ' + json.api_pw);
             console.log('status: ' + json.status);
-            location.reload();
+            location.replace('/');
           }
         };
         var data = JSON.stringify({ 'api_id': access_uid, 'api_pw': access_password });
@@ -351,7 +351,7 @@
                 console.log('set account: ' + json.access_id);
                 console.log('set passwd: ' + json.access_pw);
                 console.log('status: ' + json.status);
-                location.reload();
+                location.replace('/');
               }
             };
             var data = JSON.stringify({ 'access_id': access_uid, 'access_pw': access_password });
@@ -384,7 +384,7 @@
       elem = document.getElementById('pwm_inverse');
       if (elem) {
         //pwm_inv = elem.value;
-        if (elem.value == "true" || elem.value == "false") {
+        if (elem.value == "0" || elem.value == "1") {
           pwm_inv = elem.value;
         }
       }
@@ -400,7 +400,7 @@
           console.log('pwm frequence: ' + json.pwm_freq);
           console.log('pwm invers: ' + json.pwm_inv);
           console.log('status: ' + json.status);
-          location.reload();
+          location.replace('/');
         }
       };
       var data = JSON.stringify({ 'pwm_res': pwm_res, 'pwm_freq': pwm_freq, 'pwm_inv': pwm_inv });
@@ -483,8 +483,8 @@
     <span><label for="pwm_inverse">Inverse PWM:</label></span>
     <select name="pwm_inverse" id="pwm_inverse" size="1">
       <option value="">--- do not set ---</option>
-      <option value="true">inverse PWM signal</option>
-      <option value="false">not inverse PWM signal</option>
+      <option value="1">inverse PWM signal</option>
+      <option value="0">not inverse PWM signal</option>
     </select>
 
     <input type="button" value="[SAVE PWM]" onclick="save_pwm_config();">

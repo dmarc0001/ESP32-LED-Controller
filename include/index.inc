@@ -1,1 +1,1 @@
-const uint32_t INDEX_PAGE_SIZE = 2409;
+const uint32_t INDEX_PAGE_SIZE = 2661;

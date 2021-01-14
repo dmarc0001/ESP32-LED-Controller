@@ -27,6 +27,7 @@ to ground while start controller.
 
 Than controller spans an WLAN as Accesspoint with addr 192.168.0.1 
 and SSID "LED-AP-XXXXXX" while XXXX is the internal chip number.
+The password is "password". Not suprised...
 
 You can put the controller in your WLAN over Url
 http://192.168.0.1/ (then click in "config controller") 
@@ -36,7 +37,7 @@ http://192.168.0.1/rest/config
 the initial account is admin, password admin
 
 You can config the PWM resolution (8, 10, 12 or 15 bits), the frequency 
-in range 500 Hz up to 50 kHz.
+in range 400 Hz up to 50 kHz.
 You can also (for example for one anode RGB LED) invert the PWM signal.
 This propertys ar availible in the config page.
 You can also set the account for config, and if you whish an account 
