@@ -1,5 +1,6 @@
 #include "ApiJSONServer.hpp"
 #include "configPage.hpp"
+#include "favicon.hpp"
 
 namespace APISrv
 {
@@ -61,6 +62,16 @@ namespace APISrv
       _configUserName = prefs.getUpdateUser().c_str();
       _configPassword = prefs.getUpdatePassword().c_str();
     }
+    //
+    // das icon
+    //
+    _server->on( "/favicon.ico", HTTP_GET, [ & ]( AsyncWebServerRequest *request ) {
+      AsyncWebServerResponse *response =
+          request->beginResponse_P( 200, "image/x-icon", APISrv::FAVICON_CONTENT, APISrv::FAVICON_SIZE );
+      // response->addHeader( "Content-Encoding", "gzip" );
+      request->send( response );
+    } );
+
     //
     // Wer bist Du?
     //
