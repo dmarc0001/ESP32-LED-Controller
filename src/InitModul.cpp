@@ -36,6 +36,14 @@ void initPrefs( LEDSrv::LEDPrefs &prefs )
   if ( prefs.begin( false ) )
   {
     Serial.println( "init non volatile store...OK" );
+    Serial.print( "Firmware: <" );
+    Serial.print( prefs.getSerialStr() );
+#ifdef DEBUG
+    Serial.print( "-DEBUG" );
+#else
+    Serial.print( "-RELEASE" );
+#endif
+    Serial.println( ">" );
   }
 }
 
@@ -145,9 +153,7 @@ void initHttpServer( LEDSrv::LEDPrefs &prefs, AsyncWebServer &httpServer, LedCon
   //
   // Webserver starten
   //
-  Serial.print( "http server is starting, serial: " );
-  Serial.print( prefs.getSerialStr() );
-  Serial.println( "..." );
+  Serial.println( "http server is starting..." );
   httpServer.begin();
   Serial.println( "HTTP httpServer started" );
 }
