@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"name": "ESP32-LEDController",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"clang-format.executable": "C:\\Program Files\\LLVM\\bin\\clang-format.exe",
+		"clang-format.language.c.style": "file",
+		"clang-format.language.cpp.style": "file",
+		"files.associations": {
+			"functional": "cpp"
+		}
+	}
+}

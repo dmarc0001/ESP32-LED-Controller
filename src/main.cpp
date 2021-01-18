@@ -72,13 +72,17 @@ void loop( void )
     ledControl.getPercentStatus( ledCurrent );
     if ( ledPrefs != ledCurrent )
     {
-      //
-      // Da war was geändert => Sichern
-      //
+//
+// Da war was geändert => Sichern
+//
+#ifdef DEBUG
       Serial.println( "changed LED preferences: save to store..." );
+#endif
       prefs.setLedStats( ledCurrent );
       prefs.getLedStats( ledPrefs );
+#ifdef DEBUG
       Serial.println( "changed LED preferences: save to store...OK" );
+#endif
     }
   }
   //
@@ -91,15 +95,17 @@ void loop( void )
     //
     if ( WiFi.status() == WL_CONNECTED )
     {
-      //
-      // WiFi is Online (wieder?)
-      //
+//
+// WiFi is Online (wieder?)
+//
+#ifdef DEBUG
       Serial.print( "WiFi connected to <" );
       Serial.print( prefs.getSSID() );
       Serial.println( ">..." );
       Serial.print( "IP address: " );
       Serial.print( WiFi.localIP() );
       Serial.println( "         " );
+#endif
       initMDNS( prefs );
       // signalisieren
       digitalWrite( LEDSrv::LED_WLANOK, HIGH );
@@ -117,19 +123,23 @@ void loop( void )
       unsigned long timeDelta = millis() - lastTimer;
       if ( ( timeDelta % 1000 ) == 0 )
       {
-        //
-        // Jede Sekunde Meldung
-        //
+//
+// Jede Sekunde Meldung
+//
+#ifdef DEBUG
         Serial.print( "Disconnected: time to reset WiFi: " );
         Serial.print( int( ( LEDSrv::timeToResetWiFi - timeDelta ) / 1000 ) );
         Serial.print( "   \r" );
+#endif
       }
       if ( timeDelta >= LEDSrv::timeToResetWiFi )
       {
+#ifdef DEBUG
         Serial.println( "\rWiFi reconnecting...               " );
         Serial.print( "Reconnect to: <" );
         Serial.print( prefs.getSSID() );
         Serial.println( ">..." );
+#endif
         if ( --connect_attempts == 0 )
         {
           initWiFiAp( prefs, LEDSrv::defaultSSID, LEDSrv::defaultPassword );

@@ -7,26 +7,26 @@ namespace APISrv
   //
   // Konstenate Strings initialisieren
   //
-  const JsonString ApiJSONServerClass::cmd_set_rgbw{ LEDSrv::CMD_SET_RGBW };
-  const JsonString ApiJSONServerClass::cmd_get_rgbw{ LEDSrv::CMD_GET_RGBW };
-  const JsonString ApiJSONServerClass::cmd_set_standby{ LEDSrv::CMD_SET_STANDBY };
-  const JsonString ApiJSONServerClass::cmd_get_standby{ LEDSrv::CMD_GET_STANDBY };
-  const JsonString ApiJSONServerClass::cmd_rgbw{ LEDSrv::CMD_RGBW };
-  const JsonString ApiJSONServerClass::cmd_standby{ LEDSrv::CMD_STANDBY };
-  const JsonString ApiJSONServerClass::cmd_color_red{ LEDSrv::CMD_COLOR_RED };
-  const JsonString ApiJSONServerClass::cmd_color_green{ LEDSrv::CMD_COLOR_GREEN };
-  const JsonString ApiJSONServerClass::cmd_color_blue{ LEDSrv::CMD_COLOR_BLUE };
-  const JsonString ApiJSONServerClass::cmd_color_white{ LEDSrv::CMD_COLOR_WHITE };
-  const JsonString ApiJSONServerClass::cmd_pwm_resolution{ LEDSrv::CMD_PWM_RESOLUTION };
-  const JsonString ApiJSONServerClass::cmd_pwm_frequence{ LEDSrv::CMD_PWM_FREQUENCE };
-  const JsonString ApiJSONServerClass::cmd_pwm_is_inverse{ LEDSrv::CMD_PWM_INVERSE };
-  const JsonString ApiJSONServerClass::cmd_fw_userid{ LEDSrv::CMD_FW_USERID };
-  const JsonString ApiJSONServerClass::cmd_fw_passwd{ LEDSrv::CMD_FW_PASSWD };
-  const JsonString ApiJSONServerClass::cmd_api_userid{ LEDSrv::CMD_API_USERID };
-  const JsonString ApiJSONServerClass::cmd_api_passwd{ LEDSrv::CMD_API_PASSWD };
-  const JsonString ApiJSONServerClass::cmd_wlan_ssid{ LEDSrv::CMD_WLAN_SSID };
-  const JsonString ApiJSONServerClass::cmd_wlan_passwd{ LEDSrv::CMD_WLAN_PASSWD };
-  const JsonString ApiJSONServerClass::cmd_wlan_mdns{ LEDSrv::CMD_WLAN_MDNSHOST };
+  const JsonString ApiJSONServerClass::cmd_set_rgbw{LEDSrv::CMD_SET_RGBW};
+  const JsonString ApiJSONServerClass::cmd_get_rgbw{LEDSrv::CMD_GET_RGBW};
+  const JsonString ApiJSONServerClass::cmd_set_standby{LEDSrv::CMD_SET_STANDBY};
+  const JsonString ApiJSONServerClass::cmd_get_standby{LEDSrv::CMD_GET_STANDBY};
+  const JsonString ApiJSONServerClass::cmd_rgbw{LEDSrv::CMD_RGBW};
+  const JsonString ApiJSONServerClass::cmd_standby{LEDSrv::CMD_STANDBY};
+  const JsonString ApiJSONServerClass::cmd_color_red{LEDSrv::CMD_COLOR_RED};
+  const JsonString ApiJSONServerClass::cmd_color_green{LEDSrv::CMD_COLOR_GREEN};
+  const JsonString ApiJSONServerClass::cmd_color_blue{LEDSrv::CMD_COLOR_BLUE};
+  const JsonString ApiJSONServerClass::cmd_color_white{LEDSrv::CMD_COLOR_WHITE};
+  const JsonString ApiJSONServerClass::cmd_pwm_resolution{LEDSrv::CMD_PWM_RESOLUTION};
+  const JsonString ApiJSONServerClass::cmd_pwm_frequence{LEDSrv::CMD_PWM_FREQUENCE};
+  const JsonString ApiJSONServerClass::cmd_pwm_is_inverse{LEDSrv::CMD_PWM_INVERSE};
+  const JsonString ApiJSONServerClass::cmd_fw_userid{LEDSrv::CMD_FW_USERID};
+  const JsonString ApiJSONServerClass::cmd_fw_passwd{LEDSrv::CMD_FW_PASSWD};
+  const JsonString ApiJSONServerClass::cmd_api_userid{LEDSrv::CMD_API_USERID};
+  const JsonString ApiJSONServerClass::cmd_api_passwd{LEDSrv::CMD_API_PASSWD};
+  const JsonString ApiJSONServerClass::cmd_wlan_ssid{LEDSrv::CMD_WLAN_SSID};
+  const JsonString ApiJSONServerClass::cmd_wlan_passwd{LEDSrv::CMD_WLAN_PASSWD};
+  const JsonString ApiJSONServerClass::cmd_wlan_mdns{LEDSrv::CMD_WLAN_MDNSHOST};
 
   /**
    * Starte den JSON Server
@@ -65,7 +65,7 @@ namespace APISrv
     //
     // das icon
     //
-    _server->on( "/favicon.ico", HTTP_GET, [ & ]( AsyncWebServerRequest *request ) {
+    _server->on( "/favicon.ico", HTTP_GET, [&]( AsyncWebServerRequest *request ) {
       AsyncWebServerResponse *response =
           request->beginResponse_P( 200, "image/x-icon", APISrv::FAVICON_CONTENT, APISrv::FAVICON_SIZE );
       // response->addHeader( "Content-Encoding", "gzip" );
@@ -75,11 +75,11 @@ namespace APISrv
     //
     // Wer bist Du?
     //
-    _server->on( "/rest/identity", HTTP_GET, [ & ]( AsyncWebServerRequest *request ) { onGetIdentity( request ); } );
+    _server->on( "/rest/identity", HTTP_GET, [&]( AsyncWebServerRequest *request ) { onGetIdentity( request ); } );
     //
     // Controller config
     //
-    _server->on( "/rest/config", HTTP_GET, [ & ]( AsyncWebServerRequest *request ) {
+    _server->on( "/rest/config", HTTP_GET, [&]( AsyncWebServerRequest *request ) {
       AsyncWebServerResponse *response =
           request->beginResponse_P( 200, "text/html", APISrv::CONFIG_PAGE_CONTENT, APISrv::CONFIG_PAGE_SIZE );
       if ( _configAuthRequired )
@@ -95,79 +95,75 @@ namespace APISrv
     //
     // PWM Einstellungen: Auflösung, Frequenz, invertiert konfigurieren
     //
-    _server->on(
-        "/rest/pwm", HTTP_POST,
-        [ & ]( AsyncWebServerRequest *request ) {
-          if ( _apiAuthRequired )
-          {
-            if ( !request->authenticate( _apiUserName.c_str(), _apiPassword.c_str() ) )
-            {
-              return request->requestAuthentication();
-            }
-          }
-        },
-        NULL,
-        [ this ]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
-          return ( onPwmCommandPost( request, data, len, index, total ) );
-        } );
+    _server->on( "/rest/pwm", HTTP_POST,
+                 [&]( AsyncWebServerRequest *request ) {
+                   if ( _apiAuthRequired )
+                   {
+                     if ( !request->authenticate( _apiUserName.c_str(), _apiPassword.c_str() ) )
+                     {
+                       return request->requestAuthentication();
+                     }
+                   }
+                 },
+                 NULL,
+                 [this]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
+                   return ( onPwmCommandPost( request, data, len, index, total ) );
+                 } );
     //
     // Zugriff auf Firmware Update mit user/passwort konfigurieren
     //
-    _server->on(
-        "/rest/fw_access", HTTP_POST,
-        [ & ]( AsyncWebServerRequest *request ) {
-          if ( _apiAuthRequired )
-          {
-            if ( !request->authenticate( _apiUserName.c_str(), _apiPassword.c_str() ) )
-            {
-              return request->requestAuthentication();
-            }
-          }
-        },
-        NULL,
-        [ this ]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
-          return ( onFwAccountCommandPost( request, data, len, index, total ) );
-        } );
+    _server->on( "/rest/fw_access", HTTP_POST,
+                 [&]( AsyncWebServerRequest *request ) {
+                   if ( _apiAuthRequired )
+                   {
+                     if ( !request->authenticate( _apiUserName.c_str(), _apiPassword.c_str() ) )
+                     {
+                       return request->requestAuthentication();
+                     }
+                   }
+                 },
+                 NULL,
+                 [this]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
+                   return ( onFwAccountCommandPost( request, data, len, index, total ) );
+                 } );
     //
     // Zugriff auf API mit user/passwort konfigurieren
     //
-    _server->on(
-        "/rest/api_access", HTTP_POST,
-        [ & ]( AsyncWebServerRequest *request ) {
-          if ( _configAuthRequired )
-          {
-            if ( !request->authenticate( _configUserName.c_str(), _configPassword.c_str() ) )
-            {
-              return request->requestAuthentication();
-            }
-          }
-        },
-        NULL,
-        [ this ]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
-          return ( onApiAccountCommandPost( request, data, len, index, total ) );
-        } );
+    _server->on( "/rest/api_access", HTTP_POST,
+                 [&]( AsyncWebServerRequest *request ) {
+                   if ( _configAuthRequired )
+                   {
+                     if ( !request->authenticate( _configUserName.c_str(), _configPassword.c_str() ) )
+                     {
+                       return request->requestAuthentication();
+                     }
+                   }
+                 },
+                 NULL,
+                 [this]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
+                   return ( onApiAccountCommandPost( request, data, len, index, total ) );
+                 } );
     //
     // Zugriff auf WLAN Einstellungen und mDNS konfigurieren
     //
-    _server->on(
-        "/rest/wlan_access", HTTP_POST,
-        [ & ]( AsyncWebServerRequest *request ) {
-          if ( _configAuthRequired )
-          {
-            if ( !request->authenticate( _configUserName.c_str(), _configPassword.c_str() ) )
-            {
-              return request->requestAuthentication();
-            }
-          }
-        },
-        NULL,
-        [ this ]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
-          return ( onWlanSettingCommandPost( request, data, len, index, total ) );
-        } );
+    _server->on( "/rest/wlan_access", HTTP_POST,
+                 [&]( AsyncWebServerRequest *request ) {
+                   if ( _configAuthRequired )
+                   {
+                     if ( !request->authenticate( _configUserName.c_str(), _configPassword.c_str() ) )
+                     {
+                       return request->requestAuthentication();
+                     }
+                   }
+                 },
+                 NULL,
+                 [this]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
+                   return ( onWlanSettingCommandPost( request, data, len, index, total ) );
+                 } );
     //
     // LED Statusabfrage
     //
-    _server->on( "/rest/led", HTTP_GET, [ & ]( AsyncWebServerRequest *request ) {
+    _server->on( "/rest/led", HTTP_GET, [&]( AsyncWebServerRequest *request ) {
       if ( _apiAuthRequired )
       {
         if ( !request->authenticate( _apiUserName.c_str(), _apiPassword.c_str() ) )
@@ -180,21 +176,20 @@ namespace APISrv
     //
     // Handler für LED Command (JSON POST)
     //
-    _server->on(
-        "/rest/led", HTTP_POST,
-        [ & ]( AsyncWebServerRequest *request ) {
-          if ( _apiAuthRequired )
-          {
-            if ( !request->authenticate( _apiUserName.c_str(), _apiPassword.c_str() ) )
-            {
-              return request->requestAuthentication();
-            }
-          }
-        },
-        NULL,
-        [ this ]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
-          return ( onLedCommandPost( request, data, len, index, total ) );
-        } );
+    _server->on( "/rest/led", HTTP_POST,
+                 [&]( AsyncWebServerRequest *request ) {
+                   if ( _apiAuthRequired )
+                   {
+                     if ( !request->authenticate( _apiUserName.c_str(), _apiPassword.c_str() ) )
+                     {
+                       return request->requestAuthentication();
+                     }
+                   }
+                 },
+                 NULL,
+                 [this]( AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total ) {
+                   return ( onLedCommandPost( request, data, len, index, total ) );
+                 } );
     //
     // Server gestartet
     //
@@ -234,11 +229,13 @@ namespace APISrv
       wlanSSID = jobj[ cmd_wlan_ssid ].as< String >();
       if ( 0 != wlanSSID.compareTo( "null" ) )
       {
+#ifdef DEBUG
         Serial.print( "cmd wlan AP <" );
         Serial.print( cmd_wlan_ssid.c_str() );
         Serial.print( "> : <" );
         Serial.print( wlanSSID );
         Serial.println( ">" );
+#endif
       }
       else
       {
@@ -250,11 +247,13 @@ namespace APISrv
       wlanPw = jobj[ cmd_wlan_passwd ].as< String >();
       if ( 0 != wlanPw.compareTo( "null" ) )
       {
+#ifdef DEBUG
         Serial.print( "cmd wlan AP <" );
         Serial.print( cmd_wlan_passwd.c_str() );
         Serial.print( "> : <" );
         Serial.print( wlanPw );
         Serial.println( ">" );
+#endif
       }
       else
       {
@@ -266,11 +265,13 @@ namespace APISrv
       wlanMDNS = jobj[ cmd_wlan_mdns ].as< String >();
       if ( 0 != wlanMDNS.compareTo( "null" ) )
       {
+#ifdef DEBUG
         Serial.print( "cmd wlan AP <" );
         Serial.print( cmd_wlan_mdns.c_str() );
         Serial.print( "> : <" );
         Serial.print( wlanMDNS );
         Serial.println( ">" );
+#endif
       }
       else
       {
@@ -309,7 +310,11 @@ namespace APISrv
       answer[ "status" ] = "OK";
     }
     // serializeJson( answer, content );
+#ifdef DEBUG
     serializeJsonPretty( answer, content );
+#else
+    serializeJson( answer, content );
+#endif
     request->send( 200, "application/json", content );
     //
     // wenn SSID oder MDNS geändert wurde muss der Controller neu starten
@@ -342,7 +347,9 @@ namespace APISrv
       // das ging schief
       answer[ "error" ] = err.c_str();
       serializeJson( doc, content );
+#ifdef DEBUG
       Serial.println( content );
+#endif
       request->send( 404, "application/json", content );
       return request;
     }
@@ -355,11 +362,13 @@ namespace APISrv
       apiUserId = jobj[ cmd_api_userid ].as< String >();
       if ( 0 != apiUserId.compareTo( "null" ) )
       {
+#ifdef DEBUG
         Serial.print( "cmd api account <" );
         Serial.print( cmd_api_userid.c_str() );
         Serial.print( "> : <" );
         Serial.print( apiUserId );
         Serial.println( ">" );
+#endif
       }
       else
       {
@@ -371,11 +380,13 @@ namespace APISrv
       apiUserPw = jobj[ cmd_api_passwd ].as< String >();
       if ( 0 != apiUserPw.compareTo( "null" ) )
       {
+#ifdef DEBUG
         Serial.print( "cmd api account <" );
         Serial.print( cmd_api_passwd.c_str() );
         Serial.print( "> : <" );
         Serial.print( apiUserPw );
         Serial.println( ">" );
+#endif
       }
       else
       {
@@ -401,13 +412,18 @@ namespace APISrv
     _prefs->setApiPassword( apiUserPw );
     _apiUserName = apiUserId.c_str();
     _apiPassword = apiUserPw.c_str();
+#ifdef DEBUG
     Serial.println( "new api account setting success." );
+#endif
     if ( !answer.containsKey( "status" ) )
     {
       answer[ "status" ] = "OK";
     }
-    // serializeJson( answer, content );
+#ifdef DEBUG
     serializeJsonPretty( answer, content );
+#else
+    serializeJson( answer, content );
+#endif
     request->send( 200, "application/json", content );
     return request;
   }
@@ -431,7 +447,9 @@ namespace APISrv
       // das ging schief
       answer[ "error" ] = err.c_str();
       serializeJson( doc, content );
+#ifdef DEBUG
       Serial.println( content );
+#endif
       request->send( 404, "application/json", content );
       return request;
     }
@@ -444,11 +462,13 @@ namespace APISrv
       updateUserId = jobj[ cmd_fw_userid ].as< String >();
       if ( 0 != updateUserId.compareTo( "null" ) )
       {
+#ifdef DEBUG
         Serial.print( "cmd fw account <" );
         Serial.print( cmd_fw_userid.c_str() );
         Serial.print( "> : <" );
         Serial.print( updateUserId );
         Serial.println( ">" );
+#endif
       }
       else
       {
@@ -460,11 +480,13 @@ namespace APISrv
       updateUserPw = jobj[ cmd_fw_passwd ].as< String >();
       if ( 0 != updateUserPw.compareTo( "null" ) )
       {
+#ifdef DEBUG
         Serial.print( "cmd fw account <" );
         Serial.print( cmd_fw_passwd.c_str() );
         Serial.print( "> : <" );
         Serial.print( updateUserPw );
         Serial.println( ">" );
+#endif
       }
       else
       {
@@ -481,7 +503,9 @@ namespace APISrv
       _configAuthRequired = true;
       _configUserName = updateUserId.c_str();
       _configPassword = updateUserPw.c_str();
+#ifdef DEBUG
       Serial.println( "new firmware account setting success." );
+#endif
     }
     else
     {
@@ -495,8 +519,11 @@ namespace APISrv
     {
       answer[ "status" ] = "OK";
     }
-    // serializeJson( answer, content );
+#ifdef DEBUG
     serializeJsonPretty( answer, content );
+#else
+    serializeJson( answer, content );
+#endif
     request->send( 200, "application/json", content );
     // Ende Gelände, nur einen beantworten
     return request;
@@ -522,7 +549,9 @@ namespace APISrv
       // das ging schief
       answer[ "error" ] = err.c_str();
       serializeJson( doc, content );
+#ifdef DEBUG
       Serial.println( content );
+#endif
       request->send( 404, "application/json", content );
       return request;
     }
@@ -536,10 +565,12 @@ namespace APISrv
       uint8_t pwm_res = jobj[ cmd_pwm_resolution ].as< uint8_t >();
       if ( pwm_res >= 8 )
       {
+#ifdef DEBUG
         Serial.print( "pwm cmd: <" );
         Serial.print( cmd_pwm_resolution.c_str() );
         Serial.print( "> : " );
         Serial.println( pwm_res );
+#endif
         if ( _prefs->getPwmResolution() != pwm_res )
         {
           //
@@ -568,10 +599,12 @@ namespace APISrv
         //
         if ( pwm_freq >= LEDSrv::PWM_MIN_FREQENCE && pwm_freq <= LEDSrv::PWM_MAX_FREQENCE )
         {
+#ifdef DEBUG
           Serial.print( "pwm cmd: <" );
           Serial.print( cmd_pwm_frequence.c_str() );
           Serial.print( "> : " );
           Serial.println( pwm_freq );
+#endif
           if ( _prefs->getPwmFreq() != pwm_freq )
           {
             //
@@ -606,10 +639,12 @@ namespace APISrv
         //
         if ( _prefs->getIsLEDInvers() != ( pwm_inv == 0 ? false : true ) )
         {
+#ifdef DEBUG
           Serial.print( "pwm cmd: <" );
           Serial.print( cmd_pwm_is_inverse.c_str() );
           Serial.print( "> : " );
           Serial.println( pwm_inv );
+#endif
           //
           // geändert, das Gerät muss neu gestartet werden
           //
@@ -631,8 +666,11 @@ namespace APISrv
     {
       answer[ "status" ] = "OK";
     }
-    // serializeJson( answer, content );
+#ifdef DEBUG
     serializeJsonPretty( answer, content );
+#else
+    serializeJson( answer, content );
+#endif
     request->send( 200, "application/json", content );
     //
     // wenn PWM geändert wurde muss der Controller neu starten
@@ -665,7 +703,9 @@ namespace APISrv
       // das ging schief
       answer[ "error" ] = err.c_str();
       serializeJson( doc, content );
+#ifdef DEBUG
       Serial.println( content );
+#endif
       request->send( 404, "application/json", content );
       return request;
     }
@@ -680,16 +720,21 @@ namespace APISrv
       // is a JsonString
       if ( p.key() == cmd_set_rgbw )
       {
+#ifdef DEBUG
         Serial.print( "api rest cmd: <" );
         Serial.print( p.key().c_str() );
         Serial.println( ">" );
+#endif
         //
         // SETZE LED auf Werte...
         //
         setLedValues( p.value().as< JsonObject >() );
         answer[ cmd_set_rgbw ] = "OK";
-        // serializeJson( answer, content );
+#ifdef DEBUG
         serializeJsonPretty( answer, content );
+#else
+        serializeJson( answer, content );
+#endif
         request->send( 200, "application/json", content );
         // Ende Gelände, nur einen beantworten
         return request;
@@ -702,7 +747,11 @@ namespace APISrv
         answer[ cmd_standby ] = _ledControl->isStandBy();
         JsonObject ledValObj = answer.createNestedObject( cmd_rgbw );
         getLedValues( ledValObj );
+#ifdef DEBUG
         serializeJsonPretty( answer, content );
+#else
+        serializeJson( answer, content );
+#endif
         request->send( 200, "application/json", content );
         // Ende Gelände, nur einen beantworten
         return request;
@@ -713,7 +762,11 @@ namespace APISrv
         // gib STANDBY Wert zurück
         //
         answer[ cmd_standby ] = _ledControl->isStandBy();
+#ifdef DEBUG
         serializeJsonPretty( answer, content );
+#else
+        serializeJson( answer, content );
+#endif
         request->send( 200, "application/json", content );
         // Ende Gelände, nur einen beantworten
         return request;
@@ -724,10 +777,11 @@ namespace APISrv
         // setzt STANDBY Wert
         //
         String stbyVal( p.value().as< String >() );
+#ifdef DEBUG
         Serial.print( "api rest cmd: <standby> to <" );
         Serial.print( stbyVal );
         Serial.println( ">" );
-
+#endif
         // vergleiche
         if ( stbyVal == cmd_true )
         {
@@ -747,7 +801,9 @@ namespace APISrv
         {
           answer[ "error" ] = "wrong parameter";
           serializeJson( answer, content );
+#ifdef DEBUG
           Serial.println( "send answer: " + content );
+#endif
           request->send( 200, "application/json", content );
           return request;
         }
@@ -755,7 +811,11 @@ namespace APISrv
         // Wenn was gemacht wurde
         //
         answer[ cmd_standby ] = _ledControl->isStandBy();
+#ifdef DEBUG
         serializeJsonPretty( answer, content );
+#else
+        serializeJson( answer, content );
+#endif
         request->send( 200, "application/json", content );
         // Ende Gelände, nur einen beantworten
         return request;
@@ -853,7 +913,9 @@ namespace APISrv
     content = "{\"apiid\": \"" + _id + "\", \"hardware\": \"ESP32\"}";
     request->send( 200, "application/json", content );
 #endif
+#ifdef DEBUG
     Serial.println( "ApiJSONServerClass::onIdentity " + content );
+#endif
     return request;
   }
 
@@ -871,7 +933,11 @@ namespace APISrv
     answer[ cmd_pwm_resolution ] = _prefs->getPwmResolution();
     answer[ cmd_pwm_frequence ] = _prefs->getPwmFreq();
     answer[ cmd_pwm_is_inverse ] = _prefs->getIsLEDInvers();
+#ifdef DEBUG
     serializeJsonPretty( answer, content );
+#else
+    serializeJson( answer, content );
+#endif
     request->send( 200, "application/json", content );
     return request;
   }

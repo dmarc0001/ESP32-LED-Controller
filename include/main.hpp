@@ -5,7 +5,7 @@
 #include <WiFi.h>
 #include <mDNS.h>
 #include "ApiJSONServer.hpp"
-#include "AsyncElegantOTA.h"
+#include "AsyncElegantOTA.hpp"
 #include "LEDPrefs.hpp"
 #include "LedContol.hpp"
 #include "nvs_flash.h"
