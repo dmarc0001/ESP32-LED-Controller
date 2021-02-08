@@ -39,7 +39,7 @@ connected to the main Site. There cou my config some things.
 Or you can put the controller in your WLAN over Url
 http://192.168.4.1/ (then click in "config controller") 
   or
-http://192.168.0.1/rest/config
+http://192.168.4.1/rest/config
 
 the initial account is admin, password admin
 
