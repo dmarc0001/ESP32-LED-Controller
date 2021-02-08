@@ -25,7 +25,7 @@ namespace LEDSrv
   //
   constexpr char defaultSSID[] = "LED-AP";        //! SSID für WLAN-Accesspoint
   constexpr char defaultPassword[] = "password";  //! Passwort für WLAN
-  constexpr char hostname[] = "OTA-Server";       //! Eigener Hostname für MDNS
+  constexpr char hostname[] = "led-Server";       //! Eigener Hostname für MDNS
   constexpr char updateUser[] = "admin";          //! name des OTA Berechtigten
   constexpr char updatePassword[] = "admin";      //! Passwort des OTA Berechtigten
   constexpr double PWM_LED_FREQ = 10000.0;        //! PWM Frequenz default
