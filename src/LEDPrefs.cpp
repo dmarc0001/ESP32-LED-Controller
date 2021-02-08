@@ -2,7 +2,7 @@
 
 namespace LEDSrv
 {
-  const char *LEDPrefs::serialStr = "20210118-170742-build-0259";
+  const char *LEDPrefs::serialStr = "20210208-083357-build-0317";
 
   LEDPrefs::LEDPrefs() : Preferences()
   {
