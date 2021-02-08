@@ -8,19 +8,19 @@
 
 ## REST API Url's
 * /rest/identity
- - GET  -> REST Server identity
+  - GET  -> REST Server identity
 * /rest/led
- - GET  -> REST LED Status
+  - GET  -> REST LED Status
 * /rest/led
- - POST -> REST LED Command
+  - POST -> REST LED Command
 * /rest/pwm
- - POST -> REST set PWM Settings
+  - POST -> REST set PWM Settings
 * /rest/fw_access
- - POST -> REST set Firmware access informations
+  - POST -> REST set Firmware access informations
 * /rest/api_access
- - POST -> REST set api access informations
+  - POST -> REST set api access informations
 * /rest/wlan_access
- - POST -> REAT set WLAN SSID,PASSWD,mDNS Hostname
+  - POST -> REAT set WLAN SSID,PASSWD,mDNS Hostname
 
 ## Factory reset if somthin was wrong
 Factory RESET GPIO34 (defined in ProjectDefaults.hpp "RESET_SWITCH_PIN") 
