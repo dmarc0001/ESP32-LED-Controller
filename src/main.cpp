@@ -57,6 +57,7 @@ void setup( void )
     initWiFiAp( prefs, prefs.getSSID(), prefs.getPassword() );
   }
   initHttpServer( prefs, httpServer, &ledControl );
+  initOTAServer( prefs );
 }
 
 void loop( void )
@@ -172,5 +173,6 @@ void loop( void )
       lastTimer = millis();
     }
   }
-  // ApiJSONServer.loop();
+  ApiJSONServer.loop();
+  ArduinoOTA.handle();
 }

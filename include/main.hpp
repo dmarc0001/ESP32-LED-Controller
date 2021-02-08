@@ -8,6 +8,7 @@
 #include "ApiJSONServer.hpp"
 #include "LEDPrefs.hpp"
 #include "LedContol.hpp"
+#include "ModifiedOTA.hpp"
 #include "nvs_flash.h"
 
 extern APISrv::ApiJSONServerClass ApiJSONServer;  //! mein REST Server
@@ -19,3 +20,4 @@ void initWiFi( LEDSrv::LEDPrefs &prefs );
 void initWiFiAp( LEDSrv::LEDPrefs &prefs, String ssid, String pw );
 void initMDNS( LEDSrv::LEDPrefs &prefs );
 void initHttpServer( LEDSrv::LEDPrefs &prefs, AsyncWebServer &httpServer, LedControl::LedControlClass *ledControl );
+void initOTAServer( LEDSrv::LEDPrefs &prefs );

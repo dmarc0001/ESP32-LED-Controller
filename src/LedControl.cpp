@@ -14,8 +14,6 @@ namespace LedControl
    */
   void LedControlClass::standBy( bool standby )
   {
-    uint32_t nullValue = 0;
-    //
     if ( _standby == standby )
     {
       // nix zu tun...
@@ -28,24 +26,24 @@ namespace LedControl
     {
       return;
     }
-    //
-    // Invertierte Anschlüsse?
-    //
-    if ( LEDSrv::rgbInverted )
-    {
-      nullValue = _steps;
-    }
     _standby = standby;
     //
     // Standby ein oder aus
     //
     if ( _standby )
     {
-      // LED löschen
-      ledcWrite( LEDSrv::PWM_LED_CHANNEL_RED, nullValue );
-      ledcWrite( LEDSrv::PWM_LED_CHANNEL_GREEN, nullValue );
-      ledcWrite( LEDSrv::PWM_LED_CHANNEL_BLUE, nullValue );
-      ledcWrite( LEDSrv::PWM_LED_CHANNEL_WHITE, nullValue );
+      uint32_t duty = 0;
+      //
+      // Invertierte Anschlüsse?
+      //
+      if ( _inverted )
+      {
+        duty = _steps;
+      }
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_RED, duty );
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_GREEN, duty );
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_BLUE, duty );
+      ledcWrite( LEDSrv::PWM_LED_CHANNEL_WHITE, duty );
     }
     else
     {
@@ -111,11 +109,11 @@ namespace LedControl
    */
   void LedControlClass::setPercentStatus( LedStatusClass &status )
   {
-    _standbyVal = status;
     if ( _standby )
     {
       return;
     }
+    _standbyVal = status;
     LedStatusClass _realStatus;
     //
     // übersetzte in reale Werte
