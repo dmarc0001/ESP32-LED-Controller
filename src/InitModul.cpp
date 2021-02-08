@@ -1,8 +1,8 @@
 #include "indexPage.hpp"
 #include "main.hpp"
 
-AsyncElegantOtaClass AsyncElegantOTA;      // der OTA Server
 APISrv::ApiJSONServerClass ApiJSONServer;  //! mein REST Server
+DNSServer dnsServer;
 
 bool checkReset()
 {
@@ -55,6 +55,7 @@ void initPWM( LedControl::LedControlClass &ledControl, LEDSrv::LEDPrefs &prefs )
 void initWiFi( LEDSrv::LEDPrefs &prefs )
 {
   Serial.println( "init WIFI... " );
+  dnsServer.stop();
   WiFi.mode( WIFI_STA );
   Serial.print( "Connecting to <" );
   Serial.print( prefs.getSSID() );
@@ -72,17 +73,22 @@ void initWiFiAp( LEDSrv::LEDPrefs &prefs, String ssid, String pw )
 {
   Serial.println( "init WIFI as access point... " );
   WiFi.mode( WIFI_AP );
+  /*
   IPAddress _loc;
   _loc.fromString( "192.168.0.1" );
   IPAddress _gw;
   _gw.fromString( "255.255.255.0" );
   WiFi.softAPConfig( _loc, _loc, _gw );
+  */
   WiFi.softAP( ssid.c_str(), pw.c_str(), 1, 0, 2 );
   IPAddress IP = WiFi.softAPIP();
   Serial.print( "AP IP address: <" );
   Serial.print( IP );
   Serial.println( ">..." );
   prefs.setApIsRunning( true );
+  Serial.println( "Micro DNS Service start..." );
+  dnsServer.start( 53, "*", IP );
+  Serial.println( "init WIFI as access point... " );
 }
 
 /**
@@ -130,10 +136,6 @@ void initHttpServer( LEDSrv::LEDPrefs &prefs, AsyncWebServer &httpServer, LedCon
     response->addHeader( "Content-Encoding", "gzip" );
     request->send( response );
   } );
-  //
-  // OTA Server
-  //
-  AsyncElegantOTA.begin( &httpServer, prefs.getUpdateUser().c_str(), prefs.getUpdatePassword().c_str() );
   //
   // API Server
   //

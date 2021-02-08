@@ -1,16 +1,15 @@
 #pragma once
 
+#include <DNSServer.h>
 #include <ESPAsyncWebServer.h>
 #include <Esp.h>
 #include <WiFi.h>
 #include <mDNS.h>
 #include "ApiJSONServer.hpp"
-#include "AsyncElegantOTA.h"
 #include "LEDPrefs.hpp"
 #include "LedContol.hpp"
 #include "nvs_flash.h"
 
-extern AsyncElegantOtaClass AsyncElegantOTA;      // der OTA Server
 extern APISrv::ApiJSONServerClass ApiJSONServer;  //! mein REST Server
 
 bool checkReset();

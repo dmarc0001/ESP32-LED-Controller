@@ -4,6 +4,7 @@ LEDSrv::LEDPrefs prefs;                  //! Preferenzen
 AsyncWebServer httpServer( 80 );         //! der eigentliche Webserver Prozess
 LedControl::LedControlClass ledControl;  //! Objekt zur Kontrolle der LED
 LedControl::LedStatusClass ledPrefs;     //! aktuelle Preferenzwerte für LED (in Prozenzen)
+extern DNSServer dnsServer;
 
 void setup( void )
 {
@@ -84,6 +85,10 @@ void loop( void )
   //
   // checke WiFi Status
   //
+  if ( prefs.isApRunning() )
+  {
+    dnsServer.processNextRequest();
+  }
   if ( !isOnline && !prefs.isApRunning() )
   {
     //
@@ -167,9 +172,5 @@ void loop( void )
       lastTimer = millis();
     }
   }
-  //
-  // warten auf neustart nach Flash
-  //
-  AsyncElegantOTA.loop();
-  ApiJSONServer.loop();
+  // ApiJSONServer.loop();
 }
